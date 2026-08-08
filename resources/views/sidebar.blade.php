@@ -53,7 +53,7 @@
                                     </a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="pages-register.html" class="menu-link">
+                                    <a href="{{ url('pengguna') }}" class="menu-link">
                                         <span class="menu-text">Data Pengguna</span>
                                     </a>
                                 </li>
@@ -66,24 +66,19 @@
                     <li class="menu-item">
                         <a href="#menuComponentsui" data-bs-toggle="collapse" class="menu-link waves-effect">
                             <span class="menu-icon"><i data-lucide="briefcase"></i></span>
-                            <span class="menu-text"> Transaksi </span>
+                            <span class="menu-text"> Penjualan </span>
                             <span class="menu-arrow"></span>
                         </a>
                         <div class="collapse" id="menuComponentsui">
                             <ul class="sub-menu">
                                 <li class="menu-item">
-                                    <a href="ui-alerts.html" class="menu-link">
-                                        <span class="menu-text">Penjualan</span>
+                                    <a href="{{ url('pos') }}" class="menu-link">
+                                        <span class="menu-text">POS</span>
                                     </a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="ui-buttons.html" class="menu-link">
-                                        <span class="menu-text">Pembelian</span>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="ui-cards.html" class="menu-link">
-                                        <span class="menu-text">Pembayaran</span>
+                                    <a href="{{ url('penjualan') }}" class="menu-link">
+                                        <span class="menu-text">Daftar Penjualan</span>
                                     </a>
                                 </li>
                                 

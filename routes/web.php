@@ -3,6 +3,8 @@
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\PenggunaController;
+use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,4 +35,15 @@ Route::get('/pelanggan_table', [PelangganController::class, 'table'])->name('pel
 
 Route::resource('/supplier', SupplierController::class);
 Route::get('/supplier_table', [SupplierController::class, 'table'])->name('supplier.table');
+
+
+Route::resource('/pengguna', PenggunaController::class);
+Route::get('/pengguna_table', [PenggunaController::class, 'table'])->name('pengguna.table');
+
+Route::get('/pos', [PenjualanController::class, 'pos']);
+Route::get('/penjualan', [PenjualanController::class, 'index']);
+Route::post('/penjualan_simpan', [PenjualanController::class, 'store'])->name('penjualan.store');
+Route::get('/barang_list', [PenjualanController::class, 'barangList'])->name('barang.list');
+Route::get('/penjualan/struk/{nota}', [PenjualanController::class, 'struk'])
+    ->name('penjualan.struk');
 
