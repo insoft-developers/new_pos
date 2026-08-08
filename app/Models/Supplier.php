@@ -10,4 +10,8 @@ class Supplier extends Model
     use HasFactory;
 
     protected $table = "master_supplier";
+
+    protected $guarded = ['id'];
+
+    public $timestamps = false;
 }

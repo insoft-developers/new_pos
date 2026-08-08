@@ -3,6 +3,7 @@
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,4 +30,7 @@ Route::get('/barang_table', [BarangController::class, 'table'])->name('barang.ta
 
 Route::resource('/pelanggan', PelangganController::class);
 Route::get('/pelanggan_table', [PelangganController::class, 'table'])->name('pelanggan.table');
+
+Route::resource('/supplier', SupplierController::class);
+Route::get('/supplier_table', [SupplierController::class, 'table'])->name('supplier.table');
 

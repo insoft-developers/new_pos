@@ -48,7 +48,7 @@
                                     </a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="pages-login.html" class="menu-link">
+                                    <a href="{{ url('supplier') }}" class="menu-link">
                                         <span class="menu-text">Data Supplier</span>
                                     </a>
                                 </li>
