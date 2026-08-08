@@ -1,0 +1,64 @@
+<style>
+    .pull-right {
+        float: right !important;
+    }
+
+    .btn-tambah {
+        float: right !important;
+        margin-top: -20px !important;
+    }
+</style>
+
+@if ($view != 'dashboard')
+    <style>
+        .card {
+            border-radius: 12px;
+        }
+
+        .card-header {
+            padding: 18px 20px;
+        }
+
+        /* Table */
+        #list-table {
+            font-size: 12px;
+        }
+
+        #list-table thead th {
+            background: white;
+            color: black;
+            font-weight: 600;
+            white-space: nowrap;
+            vertical-align: middle;
+            padding: 10px 8px;
+        }
+
+        #list-table tbody td {
+            padding: 3px 8px 3px 8px;
+            vertical-align: middle;
+        }
+
+        #list-table tbody tr:hover {
+            background: #f8fbff;
+        }
+
+        /* DataTables Search */
+        .dataTables_filter input {
+            border-radius: 20px;
+            padding: .35rem .8rem;
+        }
+
+        /* Button */
+        .btn-tambah {
+            padding: 6px 18px;
+            font-weight: 600;
+        }
+
+        /* Badge stok */
+        .badge-stock {
+            font-size: 11px;
+        }
+
+      
+    </style>
+@endif
