@@ -50,4 +50,7 @@ Route::get('/penjualan', [PenjualanController::class, 'index']);
 Route::get('/penjualan_table', [PenjualanController::class, 'table'])->name('penjualan.table');
 Route::get('/penjualan/{nota}/detail', [PenjualanController::class, 'detail']);
 
+Route::get('/penjualan/export/excel', [PenjualanController::class, 'exportExcel']);
+Route::get('/penjualan/export/pdf', [PenjualanController::class, 'exportPdf']);
+
 

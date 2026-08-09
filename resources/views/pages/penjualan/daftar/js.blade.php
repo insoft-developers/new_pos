@@ -2,7 +2,16 @@
     var table = $('#list-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ route('penjualan.table') }}',
+        ajax: {
+            url: "{{ url('penjualan_table') }}",
+            data: function(d) {
+                d.tanggal_dari = $('#filter_tanggal_dari').val();
+                d.tanggal_sampai = $('#filter_tanggal_sampai').val();
+                d.customer = $('#filter_customer').val();
+                d.status = $('#filter_status').val();
+                d.kasir = $('#filter_kasir').val();
+            }
+        },
         order: [
             [2, 'desc']
         ],
@@ -45,6 +54,16 @@
             {
                 data: 'kembali',
                 name: 'kembali'
+            },
+
+            {
+                data: 'status',
+                name: 'status'
+            },
+
+            {
+                data: 'kd_user',
+                name: 'kd_user'
             },
 
 
@@ -119,7 +138,9 @@
                 } else {
 
                     data.items.forEach(function(item, index) {
-                        let typeHarga = item.price_type == 1 ? '<small><span class="badge bg-success">reguler</span></small>':'<small><span class="badge bg-danger">reseller</span></small>';
+                        let typeHarga = item.price_type == 1 ?
+                            '<small><span class="badge bg-success">reguler</span></small>' :
+                            '<small><span class="badge bg-danger">reseller</span></small>';
 
                         html += `
                         <tr>
@@ -233,5 +254,44 @@
         value = parseFloat(value || 0);
 
         return value.toLocaleString('id-ID');
+    }
+
+
+    $('#btn-filter').on('click', function() {
+        table.ajax.reload();
+    });
+    $('#btn-reset').on('click', function() {
+        $('#filter_tanggal_dari').val('');
+        $('#filter_tanggal_sampai').val('');
+        $('#filter_customer').val('');
+        $('#filter_status').val('');
+        $('#filter_kasir').val('');
+        table.ajax.reload();
+    });
+
+
+    $('#btn-export-excel').on('click', function() {
+        exportPenjualan('excel');
+    });
+
+    $('#btn-export-pdf').on('click', function() {
+        exportPenjualan('pdf');
+    });
+
+    function exportPenjualan(type) {
+        let params = new URLSearchParams({
+            tanggal_dari: $('#filter_tanggal_dari').val(),
+            tanggal_sampai: $('#filter_tanggal_sampai').val(),
+            customer: $('#filter_customer').val(),
+            status: $('#filter_status').val(),
+            kasir: $('#filter_kasir').val()
+        });
+        let url;
+        if (type === 'excel') {
+            url = "{{ url('penjualan/export/excel') }}";
+        } else {
+            url = "{{ url('penjualan/export/pdf') }}";
+        }
+        window.open(url + '?' + params.toString(), '_blank');
     }
 </script>

@@ -20,4 +20,9 @@ class Penjualan extends Model
     {
         return $this->belongsTo(Pelanggan::class, 'kd_pelanggan', 'kd_pelanggan');
     }
+
+    public function kasir():BelongsTo
+    {
+        return $this->belongsTo(Pengguna::class, 'kd_user', 'kd_pengguna');
+    }
 }

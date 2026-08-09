@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\PenjualanExport;
 use App\Models\Barang;
 use App\Models\Pelanggan;
+use App\Models\Pengguna;
 use App\Models\Penjualan;
 use App\Models\PenjualanItem;
 use App\Models\Piutang;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class PenjualanController extends Controller
@@ -26,16 +30,53 @@ class PenjualanController extends Controller
     {
         $view = 'penjualan';
         $customers = Pelanggan::all();
+        $users = Pengguna::all();
 
-        return view('pages.penjualan.daftar.index', compact('view', 'customers'));
+        return view('pages.penjualan.daftar.index', compact('view', 'customers', 'users'));
     }
 
 
     public function table(Request $request)
     {
         if ($request->ajax()) {
-            $data = Penjualan::query();
-            return DataTables::of($data)
+            $query = Penjualan::query();
+            if ($request->tanggal_dari) {
+                $query->whereDate(
+                    'tanggal',
+                    '>=',
+                    $request->tanggal_dari
+                );
+            }
+
+            if ($request->tanggal_sampai) {
+                $query->whereDate(
+                    'tanggal',
+                    '<=',
+                    $request->tanggal_sampai
+                );
+            }
+
+            if ($request->customer) {
+                $query->where(
+                    'kd_pelanggan',
+                    $request->customer
+                );
+            }
+
+            if ($request->status) {
+                $query->where(
+                    'status_pembayaran',
+                    $request->status
+                );
+            }
+
+            if ($request->kasir) {
+                $query->where(
+                    'kd_user',
+                    $request->kasir
+                );
+            }
+            return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('tanggal', function ($row) {
                     return date('d-m-Y', strtotime($row->tanggal));
@@ -61,6 +102,10 @@ class PenjualanController extends Controller
 
                 ->addColumn('kembali', function ($row) {
                     return number_format($row->kembali);
+                })
+
+                ->addColumn('status', function ($row) {
+                    return $row->status_pembayaran;
                 })
 
                 ->addColumn('action', function ($row) {
@@ -359,5 +404,101 @@ class PenjualanController extends Controller
 
             ]
         ]);
+    }
+
+
+    public function exportExcel(Request $request)
+    {
+        return Excel::download(new PenjualanExport($request), 'penjualan-' . date('Y-m-d-His') . '.xlsx');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $query = Penjualan::query();
+
+        // Filter tanggal
+        if ($request->filled('tanggal_dari')) {
+            $query->whereDate(
+                'tanggal',
+                '>=',
+                $request->tanggal_dari
+            );
+        }
+
+        if ($request->filled('tanggal_sampai')) {
+            $query->whereDate(
+                'tanggal',
+                '<=',
+                $request->tanggal_sampai
+            );
+        }
+
+        // Filter customer
+        if ($request->filled('customer')) {
+            $query->where(
+                'kd_pelanggan',
+                $request->customer
+            );
+        }
+
+        // Filter status
+        if ($request->filled('status')) {
+            $query->where(
+                'status_pembayaran',
+                $request->status
+            );
+        }
+
+        // Filter kasir
+        if ($request->filled('kasir')) {
+            $query->where(
+                'kd_user',
+                $request->kasir
+            );
+        }
+
+        $penjualan = $query
+            ->with([
+                'pelanggan',
+                'kasir'
+            ])
+            ->orderBy('tanggal', 'desc')
+            ->get();
+
+
+        $pdf = Pdf::loadView(
+            'pages.penjualan.daftar.pdf',
+            [
+                'penjualan' => $penjualan,
+
+                'tanggal_dari' =>
+                $request->tanggal_dari,
+
+                'tanggal_sampai' =>
+                $request->tanggal_sampai,
+
+                'status' =>
+                $request->status,
+
+                'customer_nama' =>
+                $request->customer,
+
+                'kasir_nama' =>
+                $request->kasir,
+            ]
+        );
+
+
+        $pdf->setPaper(
+            'A4',
+            'landscape'
+        );
+
+
+        return $pdf->stream(
+            'penjualan-' .
+                date('Y-m-d-His') .
+                '.pdf'
+        );
     }
 }
