@@ -600,6 +600,7 @@
 
     </div>
 
+    @include('pages.penjualan.modal_tambah_pelanggan')
 
 
     @include('pages.penjualan.css')

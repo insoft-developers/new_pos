@@ -110,6 +110,7 @@ class PelangganController extends Controller
             DB::commit();
             return response()->json([
                 'success' => true,
+                'data' => Pelanggan::all(),
                 'message' => 'Data berhasil disimpan.',
             ]);
         } catch (\Exception $e) {

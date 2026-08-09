@@ -72,5 +72,12 @@
             -moz-appearance: textfield;
             appearance: textfield;
         }
+
+        .row .card-body{
+            width: 78vw !important;
+        }
+        .text-end .breadcrumb{
+            padding-right: 20px !important;
+        }
     </style>
 @endif

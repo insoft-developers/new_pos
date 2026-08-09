@@ -29,6 +29,8 @@
                 document.getElementById('productModal')
             );
 
+        $(".modal-title").text("Pilih Barang");
+
         modal.show();
 
         productSearch = '';
@@ -807,17 +809,8 @@
     );
 
 
-    /* ============================================================
-       CUSTOMER
-    ============================================================ */
-
-    function addCustomer() {
-
-        console.log(
-            'Buka modal tambah pelanggan'
-        );
-
-    }
+    
+    
 
 
     /* ============================================================
@@ -1233,5 +1226,77 @@
         }
 
         renderCart();
+    }
+
+
+    function addCustomer()
+    {
+        $(".modal-title").text('Tambah Pelanggan Baru');
+        $("#modal-add-customer").modal("show");
+    }
+
+
+    $("#form-add-customer").submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: "{{ url('pelanggan') }}",
+            type: "POST",
+            data: new FormData($('#modal-add-customer form')[0]),
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                if (data.success) {
+                    $('#modal-add-customer').modal('hide');
+
+                    customerListRefresh(data.data);
+                    Swal.fire({
+                        icon: 'success',
+                        title: data.message,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                    });
+                   
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: data.message,
+                        showConfirmButton: false,
+                        scrollbarPadding: false,
+                    });
+                }
+            },
+            error: function(xhr) {
+                if (xhr.status === 422) {
+                    let errors = xhr.responseJSON.errors;
+                    let msg = Object.values(errors).map(e => e[0]).join('<br>');
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Validasi Gagal',
+                        html: msg
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Terjadi kesalahan: ' + xhr.responseJSON?.message
+                    });
+                }
+            },
+            complete: function() {
+                // $('#btn-save-data').prop('disabled', false).text('Save');
+            }
+
+        });
+    });
+
+
+    function customerListRefresh(data)
+    {
+        var html = '';
+        data.forEach(function(item){
+            html += `<option value="${item.kd_pelanggan}">${item.nm_pelanggan}</option>`;
+        });
+
+        $("#kd_pelanggan").html(html);
     }
 </script>

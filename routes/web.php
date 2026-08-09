@@ -41,9 +41,13 @@ Route::resource('/pengguna', PenggunaController::class);
 Route::get('/pengguna_table', [PenggunaController::class, 'table'])->name('pengguna.table');
 
 Route::get('/pos', [PenjualanController::class, 'pos']);
-Route::get('/penjualan', [PenjualanController::class, 'index']);
 Route::post('/penjualan_simpan', [PenjualanController::class, 'store'])->name('penjualan.store');
 Route::get('/barang_list', [PenjualanController::class, 'barangList'])->name('barang.list');
 Route::get('/penjualan/struk/{nota}', [PenjualanController::class, 'struk'])
     ->name('penjualan.struk');
+
+Route::get('/penjualan', [PenjualanController::class, 'index']);
+Route::get('/penjualan_table', [PenjualanController::class, 'table'])->name('penjualan.table');
+Route::get('/penjualan/{nota}/detail', [PenjualanController::class, 'detail']);
+
 

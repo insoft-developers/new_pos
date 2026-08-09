@@ -6,9 +6,11 @@ use App\Models\Barang;
 use App\Models\Pelanggan;
 use App\Models\Penjualan;
 use App\Models\PenjualanItem;
+use App\Models\Piutang;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class PenjualanController extends Controller
 {
@@ -20,7 +22,71 @@ class PenjualanController extends Controller
         return view('pages.penjualan.index', compact('view', 'customers'));
     }
 
-    public function penjualan() {}
+    public function index()
+    {
+        $view = 'penjualan';
+        $customers = Pelanggan::all();
+
+        return view('pages.penjualan.daftar.index', compact('view', 'customers'));
+    }
+
+
+    public function table(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Penjualan::query();
+            return DataTables::of($data)
+                ->addIndexColumn()
+                ->addColumn('tanggal', function ($row) {
+                    return date('d-m-Y', strtotime($row->tanggal));
+                })
+                ->addColumn('kd_pelanggan', function ($row) {
+                    return '<div style="white-space:normal;width:180px;">' . $row->pelanggan?->nm_pelanggan ?? '' . '</div>';
+                })
+                ->addColumn('subtotal', function ($row) {
+                    return number_format($row->subtotal);
+                })
+
+                ->addColumn('total_discount', function ($row) {
+                    return number_format($row->total_discount);
+                })
+
+                ->addColumn('belanja', function ($row) {
+                    return number_format($row->belanja);
+                })
+
+                ->addColumn('bayar', function ($row) {
+                    return number_format($row->bayar);
+                })
+
+                ->addColumn('kembali', function ($row) {
+                    return number_format($row->kembali);
+                })
+
+                ->addColumn('action', function ($row) {
+                    $button = '
+                        <center>
+                        <a target="_blank" href="' . url('penjualan/struk/' . $row->nota) . '"><button
+                            class="btn btn-success btn-sm"
+                            title="Print">
+                            <i class="mdi mdi-printer"></i>
+                        </button></a>
+
+                        <button
+                            onclick="detailPenjualan(\'' . $row->nota . '\')"
+                            class="btn btn-info btn-sm"
+                            title="Hapus">
+                            <i class="mdi mdi-file"></i>
+                        </button>
+                            </center>
+                        ';
+
+                    return $button;
+                })
+                ->rawColumns(['action', 'kd_pelanggan'])
+                ->make(true);
+        }
+    }
 
     public function barangList(Request $request)
     {
@@ -146,6 +212,25 @@ class PenjualanController extends Controller
                 'status_pembayaran' => $statusPembayaran,
             ]);
 
+            if ($bayar < $total) {
+                $piutang = new Piutang;
+                $piutang->nota = $nota;
+                $piutang->kd_pelanggan = $request->kd_pelanggan;
+                $piutang->keterangan = $request->keterangan;
+                $piutang->tanggal = date('Y-m-d');
+                $piutang->belanja = $total;
+                $piutang->bayar = $bayar;
+                $piutang->sisa = $kembali;
+                $piutang->donasi = 0;
+                $piutang->kembali = 0;
+                $piutang->kd_user = $user;
+                $piutang->tempo_hari = $tempoHari;
+                $piutang->jatuh_tempo = $jatuhTempo;
+                $piutang->save();
+            }
+
+
+
             foreach ($request->items as $item) {
                 $barang = Barang::where('kd_barang', $item['kd_barang'])
                     ->lockForUpdate()
@@ -228,5 +313,51 @@ class PenjualanController extends Controller
             'items',
             'pelanggan'
         ));
+    }
+
+
+    public function detail(String $nota)
+    {
+        $penjualan = Penjualan::where('nota', $nota)
+            ->first();
+
+        if (!$penjualan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data penjualan tidak ditemukan.'
+            ], 404);
+        }
+
+        $items = PenjualanItem::where('nota', $nota)
+            ->orderBy('id')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+
+            'data' => [
+
+                'nota' => $penjualan->nota,
+
+                'user' => $penjualan->kd_user,
+
+                'tanggal' => date('d F Y', strtotime($penjualan->tanggal)),
+
+                'pelanggan' => $penjualan->pelanggan->nm_pelanggan ?? 'Umum',
+
+                'subtotal' => $penjualan->subtotal ?? 0,
+
+                'diskon' => $penjualan->total_discount ?? 0,
+
+                'total' => $penjualan->belanja ?? 0,
+
+                'bayar' => $penjualan->bayar ?? 0,
+
+                'kembali' => $penjualan->kembali ?? 0,
+
+                'items' => $items
+
+            ]
+        ]);
     }
 }
