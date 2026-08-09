@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PelangganController;
@@ -19,38 +20,57 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-Route::get('/', [MainController::class, 'index']);
-
-Route::get('/barang', [BarangController::class,'index']);
-Route::get('/barang_edit/{kd_barang}', [BarangController::class, 'edit']);
-Route::post('/barang_simpan', [BarangController::class, 'store']);
-Route::post('/barang_update', [BarangController::class, 'update']);
-Route::post('/barang_delete', [BarangController::class, 'destroy']);
-Route::get('/barang_table', [BarangController::class, 'table'])->name('barang.table');
+Route::middleware('login')->group(function () {
 
 
-Route::resource('/pelanggan', PelangganController::class);
-Route::get('/pelanggan_table', [PelangganController::class, 'table'])->name('pelanggan.table');
+    Route::get('/', [MainController::class, 'index']);
 
-Route::resource('/supplier', SupplierController::class);
-Route::get('/supplier_table', [SupplierController::class, 'table'])->name('supplier.table');
-
-
-Route::resource('/pengguna', PenggunaController::class);
-Route::get('/pengguna_table', [PenggunaController::class, 'table'])->name('pengguna.table');
-
-Route::get('/pos', [PenjualanController::class, 'pos']);
-Route::post('/penjualan_simpan', [PenjualanController::class, 'store'])->name('penjualan.store');
-Route::get('/barang_list', [PenjualanController::class, 'barangList'])->name('barang.list');
-Route::get('/penjualan/struk/{nota}', [PenjualanController::class, 'struk'])
-    ->name('penjualan.struk');
-
-Route::get('/penjualan', [PenjualanController::class, 'index']);
-Route::get('/penjualan_table', [PenjualanController::class, 'table'])->name('penjualan.table');
-Route::get('/penjualan/{nota}/detail', [PenjualanController::class, 'detail']);
-
-Route::get('/penjualan/export/excel', [PenjualanController::class, 'exportExcel']);
-Route::get('/penjualan/export/pdf', [PenjualanController::class, 'exportPdf']);
+    Route::get('/barang', [BarangController::class, 'index']);
+    Route::get('/barang_edit/{kd_barang}', [BarangController::class, 'edit']);
+    Route::post('/barang_simpan', [BarangController::class, 'store']);
+    Route::post('/barang_update', [BarangController::class, 'update']);
+    Route::post('/barang_delete', [BarangController::class, 'destroy']);
+    Route::get('/barang_table', [BarangController::class, 'table'])->name('barang.table');
 
 
+    Route::resource('/pelanggan', PelangganController::class);
+    Route::get('/pelanggan_table', [PelangganController::class, 'table'])->name('pelanggan.table');
+
+    Route::resource('/supplier', SupplierController::class);
+    Route::get('/supplier_table', [SupplierController::class, 'table'])->name('supplier.table');
+
+
+    Route::resource('/pengguna', PenggunaController::class);
+    Route::get('/pengguna_table', [PenggunaController::class, 'table'])->name('pengguna.table');
+
+    Route::get('/pos', [PenjualanController::class, 'pos']);
+    Route::post('/penjualan_simpan', [PenjualanController::class, 'store'])->name('penjualan.store');
+    Route::get('/barang_list', [PenjualanController::class, 'barangList'])->name('barang.list');
+    Route::get('/penjualan/struk/{nota}', [PenjualanController::class, 'struk'])
+        ->name('penjualan.struk');
+
+    Route::get('/penjualan', [PenjualanController::class, 'index']);
+    Route::get('/penjualan_table', [PenjualanController::class, 'table'])->name('penjualan.table');
+    Route::get('/penjualan/{nota}/detail', [PenjualanController::class, 'detail']);
+
+    Route::get('/penjualan/export/excel', [PenjualanController::class, 'exportExcel']);
+    Route::get('/penjualan/export/pdf', [PenjualanController::class, 'exportPdf']);
+    Route::post('/penjualan_hapus', [PenjualanController::class, 'hapus']);
+
+    Route::post('/logout', [
+        LoginController::class,
+        'logout'
+    ])->name('logout');
+});
+
+
+Route::get('/login', [
+    LoginController::class,
+    'index'
+])->name('login');
+
+
+Route::post('/login', [
+    LoginController::class,
+    'login'
+])->name('login.process');

@@ -120,8 +120,16 @@ class PenjualanController extends Controller
                         <button
                             onclick="detailPenjualan(\'' . $row->nota . '\')"
                             class="btn btn-info btn-sm"
-                            title="Hapus">
+                            title="Detail">
                             <i class="mdi mdi-file"></i>
+                        </button>
+
+
+                         <button
+                            onclick="hapusPenjualan(\'' . $row->nota . '\')"
+                            class="btn btn-danger btn-sm"
+                            title="Hapus">
+                            <i class="mdi mdi-delete"></i>
                         </button>
                             </center>
                         ';
@@ -500,5 +508,35 @@ class PenjualanController extends Controller
                 date('Y-m-d-His') .
                 '.pdf'
         );
+    }
+
+
+    public function hapus(Request $request)
+    {
+        $input = $request->all();
+        $nota = $input['nota'];
+
+        DB::beginTransaction();
+        try {
+            
+
+            Penjualan::where('nota', $nota)->delete();
+            PenjualanItem::where('nota', $nota)->delete();
+
+            DB::commit();
+            return response()->json([
+                "success" => true,
+                "message" => "Hapus Berhasil"
+            ]);
+
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                "success" => false,
+                "message" => $th->getMessage()
+            ]);
+        }
+
     }
 }
