@@ -18,20 +18,22 @@
             <div data-simplebar>
                 <ul class="app-menu">
 
-                    <li class="menu-title">Menu</li>
-
+                    
+                    <li class="menu-title"></li>
                     <li class="menu-item">
                         <a href="{{ url('/') }}" class="menu-link waves-effect">
                             <span class="menu-icon"><i data-lucide="airplay "></i></span>
-                            <span class="menu-text"> Home </span>
-                            <span class="badge bg-info rounded-pill ms-auto">3</span>
+                            <span class="menu-text"> Dashboard </span>
+                            
                         </a>
                     </li>
 
-                    <li class="menu-title"></li>
+                    <li class="menu-title">Menu Utama</li>
+
+                   
                     <li class="menu-item">
                         <a href="#menuExpages" data-bs-toggle="collapse" class="menu-link waves-effect">
-                            <span class="menu-icon"><i data-lucide="copy"></i></span>
+                            <span class="menu-icon"><i data-lucide="database"></i></span>
                             <span class="menu-text"> Master Data </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -65,7 +67,7 @@
 
                     <li class="menu-item">
                         <a href="#menuComponentsui" data-bs-toggle="collapse" class="menu-link waves-effect">
-                            <span class="menu-icon"><i data-lucide="briefcase"></i></span>
+                            <span class="menu-icon"><i data-lucide="shopping-cart"></i></span>
                             <span class="menu-text"> Penjualan </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -86,9 +88,33 @@
                         </div>
                     </li>
 
+
+                    <li class="menu-item">
+                        <a href="#menuPembelian" data-bs-toggle="collapse" class="menu-link waves-effect">
+                            <span class="menu-icon"><i data-lucide="shopping-bag"></i></span>
+                            <span class="menu-text"> Pembelian </span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse" id="menuPembelian">
+                            <ul class="sub-menu">
+                                <li class="menu-item">
+                                    <a href="{{ url('pembelian/create') }}" class="menu-link">
+                                        <span class="menu-text">Tambah Pembelian</span>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="{{ url('pembelian') }}" class="menu-link">
+                                        <span class="menu-text">Daftar Pembelian</span>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </div>
+                    </li>
+
                     <li class="menu-item">
                         <a href="#menuExtendedui" data-bs-toggle="collapse" class="menu-link waves-effect">
-                            <span class="menu-icon"><i data-lucide="layers-3"></i></span>
+                            <span class="menu-icon"><i data-lucide="pie-chart"></i></span>
                             <span class="menu-text"> Laporan </span>
                             <span class="menu-arrow"></span>
                         </a>
@@ -120,7 +146,7 @@
 
                     <li class="menu-item">
                         <a href="#menuIcons" data-bs-toggle="collapse" class="menu-link waves-effect">
-                            <span class="menu-icon"><i data-lucide="box"></i></span>
+                            <span class="menu-icon"><i data-lucide="settings"></i></span>
                             <span class="menu-text"> Pengaturan </span>
                             <span class="menu-arrow"></span>
                         </a>

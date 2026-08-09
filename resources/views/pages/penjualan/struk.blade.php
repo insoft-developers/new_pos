@@ -210,7 +210,7 @@
 
          <div class="info-label">Kasir</div>
         <div>
-            {{ $penjualan->kd_user }}
+            {{ $penjualan->kasir?->nama ?? '' }}
         </div>
 
     </div>

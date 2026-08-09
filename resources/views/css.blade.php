@@ -7,6 +7,20 @@
         float: right !important;
         margin-top: -20px !important;
     }
+
+    .nama-toko {
+        font-size: 26px;
+        font-weight: bold;
+        margin-top: -10px;
+    }
+
+    .alamat-toko {
+        display: block;
+        position: relative;
+        left: -228px;
+        top: 25px;
+        color: #3f87fd;
+    }
 </style>
 
 @if ($view != 'dashboard')
@@ -73,10 +87,11 @@
             appearance: textfield;
         }
 
-        .row .card-body{
+        .row .card-body {
             width: 78vw !important;
         }
-        .text-end .breadcrumb{
+
+        .text-end .breadcrumb {
             padding-right: 20px !important;
         }
     </style>

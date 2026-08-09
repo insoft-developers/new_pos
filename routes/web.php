@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\SupplierController;
@@ -56,6 +57,15 @@ Route::middleware('login')->group(function () {
     Route::get('/penjualan/export/excel', [PenjualanController::class, 'exportExcel']);
     Route::get('/penjualan/export/pdf', [PenjualanController::class, 'exportPdf']);
     Route::post('/penjualan_hapus', [PenjualanController::class, 'hapus']);
+
+    Route::resource('pembelian', PembelianController::class);
+    Route::get('/pembelian/barang/{kd_barang}', [PembelianController::class,'getBarangDetail'])->name('pembelian.barang.detail');
+    Route::get('/pembelian_table', [PembelianController::class, 'table']);
+
+    Route::get('/pembelian/export/excel', [PembelianController::class, 'exportExcel']);
+    Route::get('/pembelian/export/pdf', [PembelianController::class, 'exportPdf']);
+    Route::post('/pembelian_hapus', [PembelianController::class, 'hapus']);
+
 
     Route::post('/logout', [
         LoginController::class,

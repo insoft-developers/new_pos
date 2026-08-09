@@ -108,6 +108,10 @@ class PenjualanController extends Controller
                     return $row->status_pembayaran;
                 })
 
+                ->addColumn('kd_user', function($row){
+                    return $row->kasir?->nama ?? '';
+                })
+
                 ->addColumn('action', function ($row) {
                     $button = '
                         <center>
@@ -235,7 +239,7 @@ class PenjualanController extends Controller
                 ? ((int) substr($lastNota->nota, 5)) + 1
                 : 1;
 
-            $user = 'USR-100006';
+            $user = session('kd_pengguna');
             $kode = substr($user, -3);
 
             $nota = 'W-' . $kode . str_pad(
@@ -269,7 +273,7 @@ class PenjualanController extends Controller
                 $piutang = new Piutang;
                 $piutang->nota = $nota;
                 $piutang->kd_pelanggan = $request->kd_pelanggan;
-                $piutang->keterangan = $request->keterangan;
+                $piutang->keterangan = $request->keterangan ?? '';
                 $piutang->tanggal = date('Y-m-d');
                 $piutang->belanja = $total;
                 $piutang->bayar = $bayar;

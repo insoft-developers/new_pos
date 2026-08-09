@@ -26,10 +26,12 @@
             <button class="button-toggle-menu waves-effect waves-dark rounded-circle">
                 <i class="mdi mdi-menu"></i>
             </button>
+            <h5 class="nama-toko">{{ env('NAMA_TOKO') }}</h5>
+            <p class="alamat-toko">{{ env('ALAMAT_TOKO1') }} - {{ env('ALAMAT_TOKO2') }} </p>
         </div>
 
         <ul class="topbar-menu d-flex align-items-center gap-2">
-       
+           
             <li class="dropdown">
                 <a class="nav-link dropdown-toggle nav-user me-0 waves-effect waves-dark" data-bs-toggle="dropdown"
                     href="#" role="button" aria-haspopup="false" aria-expanded="false">
