@@ -88,14 +88,14 @@ class PembelianController extends Controller
                 ->addColumn('action', function ($row) {
                     $button = '
                         <center>
-                        <a target="_blank" href="' . url('penjualan/struk/' . $row->nota) . '"><button
+                        <a target="_blank" href="' . url('pembelian/struk/' . $row->nota) . '"><button
                             class="btn btn-success btn-sm"
                             title="Print">
                             <i class="mdi mdi-printer"></i>
                         </button></a>
 
                         <button
-                            onclick="detailPenjualan(\'' . $row->nota . '\')"
+                            onclick="detailPembelian(\'' . $row->nota . '\')"
                             class="btn btn-info btn-sm"
                             title="Detail">
                             <i class="mdi mdi-file"></i>
@@ -103,7 +103,7 @@ class PembelianController extends Controller
 
 
                          <button
-                            onclick="hapusPenjualan(\'' . $row->nota . '\')"
+                            onclick="deleteData(' . $row->id . ')"
                             class="btn btn-danger btn-sm"
                             title="Hapus">
                             <i class="mdi mdi-delete"></i>
@@ -304,6 +304,11 @@ class PembelianController extends Controller
                     0,
 
                 ]);
+
+                Barang::where('kd_barang', $item->kd_barang)->update([
+                    "harga_beli" => $item->harga
+
+                ]);
             }
 
 
@@ -359,7 +364,26 @@ class PembelianController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $pembelian = Pembelian::find($id);
+            $nota = $pembelian->nota;
+
+            PembelianItem::where('nota', $nota)->delete();
+
+            $pembelian->delete();
+
+            DB::commit();
+            return response()->json([
+                "success" => true,
+                "message" => "Berhasil hapus data"
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                "success" => false,
+                "message" => $th->getMessage()
+            ]);
+        }
     }
 
 
@@ -477,32 +501,67 @@ class PembelianController extends Controller
     }
 
 
-    // public function hapus(Request $request)
-    // {
-    //     $input = $request->all();
-    //     $nota = $input['nota'];
+    public function struk($nota)
+    {
+        $pembelian = Pembelian::where('nota', $nota)->firstOrFail();
 
-    //     DB::beginTransaction();
-    //     try {
-            
+        $items = PembelianItem::where('nota', $nota)
+            ->orderBy('id')
+            ->get();
 
-    //         Penjualan::where('nota', $nota)->delete();
-    //         PenjualanItem::where('nota', $nota)->delete();
+        $supplier = Supplier::where(
+            'kd_supplier',
+            $pembelian->kd_supplier
+        )->first();
 
-    //         DB::commit();
-    //         return response()->json([
-    //             "success" => true,
-    //             "message" => "Hapus Berhasil"
-    //         ]);
+        return view('pages.pembelian.struk', compact(
+            'pembelian',
+            'items',
+            'supplier'
+        ));
+    }
 
 
-    //     } catch (\Throwable $th) {
-    //         DB::rollBack();
-    //         return response()->json([
-    //             "success" => false,
-    //             "message" => $th->getMessage()
-    //         ]);
-    //     }
+    public function detail(String $nota)
+    {
+        $pembelian = Pembelian::where('nota', $nota)
+            ->first();
 
-    // }
+        if (!$pembelian) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pembelian tidak ditemukan.'
+            ], 404);
+        }
+
+        $items = PembelianItem::where('nota', $nota)
+            ->orderBy('id')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+
+            'data' => [
+
+                'nota' => $pembelian->nota,
+
+                'user' => $pembelian->kasir?->nama ?? '',
+
+                'tanggal' => date('d F Y', strtotime($pembelian->tanggal)),
+
+                'supplier' => $pembelian->supplier->nm_supplier ?? 'Umum',
+
+                'subtotal' => $pembelian->subtotal ?? 0,
+
+                'diskon' => $pembelian->total_discount ?? 0,
+
+                'total' => $pembelian->total_pembelian ?? 0,
+
+
+                'items' => $items
+
+            ]
+        ]);
+    }
+
 }

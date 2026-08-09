@@ -69,18 +69,18 @@
     }
 
 
-    function detailPenjualan(nota) {
+    function detailPembelian(nota) {
 
         $('#detail-loading').show();
         $('#detail-content').hide();
 
         $('#detail-item-list').html('');
 
-        $('#modal-detail-penjualan').modal('show');
+        $('#modal-detail-pembelian').modal('show');
 
         $.ajax({
 
-            url: "{{ url('/penjualan') }}" + "/" + encodeURIComponent(nota) + '/detail',
+            url: "{{ url('/pembelian') }}" + "/" + encodeURIComponent(nota) + '/detail',
 
             type: 'GET',
 
@@ -93,10 +93,10 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Gagal',
-                        text: response.message || 'Detail penjualan tidak ditemukan.'
+                        text: response.message || 'Detail pembelian tidak ditemukan.'
                     });
 
-                    $('#modal-detail-penjualan').modal('hide');
+                    $('#modal-detail-pembelian').modal('hide');
 
                     return;
                 }
@@ -106,7 +106,7 @@
                 // Header
                 $('#detail-nota').text(data.nota ?? '-');
                 $('#detail-tanggal').text(data.tanggal ?? '-');
-                $('#detail-pelanggan').text(data.pelanggan ?? 'Umum');
+                $('#detail-supplier').text(data.supplier ?? 'Umum');
                 $('#detail-kasir').text(data.user ?? '');
 
                 // Item
@@ -125,9 +125,7 @@
                 } else {
 
                     data.items.forEach(function(item, index) {
-                        let typeHarga = item.price_type == 1 ?
-                            '<small><span class="badge bg-success">reguler</span></small>' :
-                            '<small><span class="badge bg-danger">reseller</span></small>';
+                       
 
                         html += `
                         <tr>
@@ -158,8 +156,7 @@
 
                             <td class="text-end">
                                 ${formatRupiah(item.harga)}
-                                <br>
-                                ${typeHarga}
+                               
                             </td>
 
                             <td class="text-end fw-semibold">
@@ -167,7 +164,7 @@
                             </td>
 
                             <td class="text-end fw-semibold">
-                                ${formatRupiah(item.disk)}
+                                ${formatRupiah(item.diskon)}
                             </td>
 
                               <td class="text-end fw-semibold">
@@ -197,13 +194,7 @@
                     formatRupiah(data.total)
                 );
 
-                $('#detail-bayar').text(
-                    formatRupiah(data.bayar)
-                );
-
-                $('#detail-kembali').text(
-                    formatRupiah(data.kembali)
-                );
+               
 
 
                 $('#detail-loading').hide();
@@ -219,10 +210,10 @@
                     icon: 'error',
                     title: 'Gagal Memuat Data',
                     text: xhr.responseJSON?.message ||
-                        'Terjadi kesalahan saat mengambil detail penjualan.'
+                        'Terjadi kesalahan saat mengambil detail pembelian.'
                 });
 
-                $('#modal-detail-penjualan').modal('hide');
+                $('#modal-detail-pembelian').modal('hide');
             }
 
         });
@@ -280,9 +271,7 @@
         window.open(url + '?' + params.toString(), '_blank');
     }
 
-
-
-    function hapusPenjualan(nota) {
+    function deleteData(id) {
         Swal.fire({
             title: 'Are sure?',
             text: "This data will be deleted permanently",
@@ -295,11 +284,10 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ url('penjualan_hapus') }}",
-                    type: 'POST',
+                    url: "{{ url('pembelian') }}"+"/"+id,
+                    type: 'DELETE',
                     data: {
-                        _token: '{{ csrf_token() }}',
-                        nota: nota
+                        _token: '{{ csrf_token() }}'
                     },
                     success: function(response) {
                         Swal.fire('Berhasil!', response.message, 'success');
@@ -313,4 +301,6 @@
             }
         });
     }
+
+    
 </script>

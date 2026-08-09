@@ -49,8 +49,8 @@
 </style>
 
 
-<div class="modal fade" id="modal-detail-penjualan" tabindex="-1"
-    aria-labelledby="modalDetailPenjualanLabel" aria-hidden="true">
+<div class="modal fade" id="modal-detail-pembelian" tabindex="-1"
+    aria-labelledby="modalDetailPembelianLabel" aria-hidden="true">
 
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
 
@@ -58,9 +58,9 @@
 
             <div class="modal-header">
                 <div>
-                    <h5 class="modal-title" id="modalDetailPenjualanLabel">
+                    <h5 class="modal-title" id="modalDetailPembelianLabel">
                         <i class="mdi mdi-receipt-text-outline me-1"></i>
-                        Detail Penjualan
+                        Detail Pembelian
                     </h5>
 
                     <small class="text-muted" id="detail-subtitle">
@@ -106,8 +106,8 @@
 
                         <div class="col-md-3">
                             <div class="detail-box">
-                                <small>Pelanggan</small>
-                                <strong id="detail-pelanggan">-</strong>
+                                <small>Supplier</small>
+                                <strong id="detail-supplier">-</strong>
                             </div>
                         </div>
 
@@ -127,7 +127,7 @@
                         <div class="card-header bg-white">
                             <h6 class="mb-0">
                                 <i class="mdi mdi-cart-outline me-1"></i>
-                                Item Penjualan
+                                Item Pembelian
                             </h6>
                         </div>
 
@@ -184,25 +184,13 @@
                                 </div>
 
                                 <div class="summary-row total">
-                                    <span>Total Penjualan</span>
+                                    <span>Total Pembelian</span>
                                     <strong id="detail-total">
                                         Rp 0
                                     </strong>
                                 </div>
 
-                                <div class="summary-row">
-                                    <span>Bayar</span>
-                                    <strong id="detail-bayar">
-                                        Rp 0
-                                    </strong>
-                                </div>
-
-                                <div class="summary-row">
-                                    <span>Kembali</span>
-                                    <strong id="detail-kembali">
-                                        Rp 0
-                                    </strong>
-                                </div>
+                               
 
                             </div>
 

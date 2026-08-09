@@ -66,6 +66,11 @@ Route::middleware('login')->group(function () {
     Route::get('/pembelian/export/pdf', [PembelianController::class, 'exportPdf']);
     Route::post('/pembelian_hapus', [PembelianController::class, 'hapus']);
 
+    Route::get('/pembelian/struk/{nota}', [PembelianController::class, 'struk'])
+        ->name('pembelian.struk');
+
+    Route::get('/pembelian/{nota}/detail', [PembelianController::class, 'detail']);
+
 
     Route::post('/logout', [
         LoginController::class,
