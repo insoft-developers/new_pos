@@ -6,16 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Piutang extends Model
+class Pembayaran extends Model
 {
     use HasFactory;
+
     protected $guarded = ['id'];
-    protected $table = 'piutang';
+    protected $table = 'pembayaran';
     public $timestamps = false;
 
-    public function customer():BelongsTo
+
+    public function pelanggan():BelongsTo
     {
-        return $this->belongsTo(Pelanggan::class, 'kd_pelanggan', 'kd_pelanggan');
+        return $this->belongsTo(Pelanggan::class, 'pelanggan', 'kd_pelanggan');
     }
 
     public function kasir():BelongsTo

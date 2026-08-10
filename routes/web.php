@@ -4,9 +4,11 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PelangganController;
+use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PenjualanController;
+use App\Http\Controllers\PiutangController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
@@ -70,6 +72,16 @@ Route::middleware('login')->group(function () {
         ->name('pembelian.struk');
 
     Route::get('/pembelian/{nota}/detail', [PembelianController::class, 'detail']);
+
+    Route::resource('/piutang', PiutangController::class);
+    Route::get('/piutang_table', [PiutangController::class, 'table'])->name('piutang.table');
+
+    Route::resource('/pembayaran', PembayaranController::class);
+    Route::get('/pembayaran_table', [PembayaranController::class, 'table'])->name('pembayaran.table');
+
+    Route::get('/piutang/export/excel', [PiutangController::class, 'exportExcel']);
+    Route::get('/piutang/export/pdf', [PiutangController::class, 'exportPdf']);
+    Route::get('/piutang_list/{id}', [PiutangController::class, 'piutangList']);
 
 
     Route::post('/logout', [

@@ -112,6 +112,30 @@
                         </div>
                     </li>
 
+
+                    <li class="menu-item">
+                        <a href="#menuKeuangan" data-bs-toggle="collapse" class="menu-link waves-effect">
+                            <span class="menu-icon"><i data-lucide="dollar-sign"></i></span>
+                            <span class="menu-text"> Keuangan </span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse" id="menuKeuangan">
+                            <ul class="sub-menu">
+                                <li class="menu-item">
+                                    <a href="{{ url('piutang') }}" class="menu-link">
+                                        <span class="menu-text">Piutang</span>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="{{ url('pembayaran') }}" class="menu-link">
+                                        <span class="menu-text">Pembayaran</span>
+                                    </a>
+                                </li>
+                                
+                            </ul>
+                        </div>
+                    </li>
+
                     <li class="menu-item">
                         <a href="#menuExtendedui" data-bs-toggle="collapse" class="menu-link waves-effect">
                             <span class="menu-icon"><i data-lucide="pie-chart"></i></span>
