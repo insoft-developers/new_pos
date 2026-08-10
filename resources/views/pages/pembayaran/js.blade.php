@@ -3,13 +3,12 @@
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('piutang.table') }}",
+            url: "{{ route('pembayaran.table') }}",
             data: function(d) {
                 d.tanggal_dari = $('#filter_tanggal_dari').val();
                 d.tanggal_sampai = $('#filter_tanggal_sampai').val();
                 d.customer = $('#filter_customer').val();
-                d.tempo = $('#filter_tempo').val();
-                d.status = $('#filter_status').val();
+               
             }
         },
         order: [
@@ -26,6 +25,11 @@
                 name: 'tanggal'
             },
 
+            {
+                data: 'no_pembayaran',
+                name: 'no_pembayaran'
+            },
+
 
             {
                 data: 'nota',
@@ -36,27 +40,17 @@
                 name: 'kd_pelanggan'
             },
             {
-                data: 'belanja',
-                name: 'belanja'
+                data: 'nilai_nota',
+                name: 'nilai_nota'
             },
             {
-                data: 'bayar',
-                name: 'bayar'
+                data: 'pembayaran',
+                name: 'pembayaran'
             },
             {
                 data: 'sisa',
                 name: 'sisa'
             },
-
-            {
-                data: 'tempo_hari',
-                name: 'tempo_hari'
-            },
-            {
-                data: 'jatuh_tempo',
-                name: 'jatuh_tempo'
-            },
-
 
             {
                 data: 'kd_user',
@@ -256,33 +250,31 @@
         $('#filter_tanggal_dari').val('');
         $('#filter_tanggal_sampai').val('');
         $('#filter_customer').val('');
-        $('#filter_tempo').val('');
-        $('#filter_status').val('');
+       
         table.ajax.reload();
     });
 
 
     $('#btn-export-excel').on('click', function() {
-        exportPiutang('excel');
+        exportPembayaran('excel');
     });
 
     $('#btn-export-pdf').on('click', function() {
-        exportPiutang('pdf');
+        exportPembayaran('pdf');
     });
 
-    function exportPiutang(type) {
+    function exportPembayaran(type) {
         let params = new URLSearchParams({
             tanggal_dari: $('#filter_tanggal_dari').val(),
             tanggal_sampai: $('#filter_tanggal_sampai').val(),
             customer: $('#filter_customer').val(),
-            tempo: $('#filter_tempo').val(),
-            status: $('#filter_status').val()
+            
         });
         let url;
         if (type === 'excel') {
-            url = "{{ url('piutang/export/excel') }}";
+            url = "{{ url('pembayaran/export/excel') }}";
         } else {
-            url = "{{ url('piutang/export/pdf') }}";
+            url = "{{ url('pembayaran/export/pdf') }}";
         }
         window.open(url + '?' + params.toString(), '_blank');
     }
@@ -443,8 +435,7 @@
                 if (response.success) {
                     $("#modal-pembayaran").modal("hide");
                     Swal.fire('Berhasil!', response.message, 'success');
-                    // reloadTable();
-                    window.location = "{{ url('pembayaran') }}";
+                    reloadTable();
                 } else {
                     Swal.fire('Gagal!', xhr.responseJSON.message || 'Terjadi kesalahan.',
                         'error');

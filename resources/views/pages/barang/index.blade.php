@@ -41,7 +41,104 @@
                                  </button>
                              </div>
 
+                             
+
+                            
                              <div class="card-body">
+
+                                 {{-- Filter --}}
+                                 <div class="row g-2 mb-3">
+                                     
+                                     <div class="col-md-2">
+                                         <label class="form-label mb-1">
+                                             Kategori
+                                         </label>
+
+                                         <select id="filter_kategori" class="form-select form-select-sm">
+
+                                             <option value="">Semua Kategori</option>
+
+                                             @foreach ($kategori ?? [] as $item)
+                                                 <option value="{{ $item->nm_kategori }}">
+                                                     {{ $item->nm_kategori }}
+                                                 </option>
+                                             @endforeach
+
+                                         </select>
+                                     </div>  
+                                     
+                                     
+                                      <div class="col-md-2">
+                                         <label class="form-label mb-1">
+                                             Supplier
+                                         </label>
+
+                                         <select id="filter_supplier" class="form-select form-select-sm">
+
+                                             <option value="">Semua Supplier</option>
+
+                                             @foreach ($supplier ?? [] as $item)
+                                                 <option value="{{ $item->kd_supplier }}">
+                                                     {{ $item->nm_supplier }}
+                                                 </option>
+                                             @endforeach
+
+                                         </select>
+                                     </div>
+
+                                     
+                                     <div class="col-md-2">
+                                         <label class="form-label mb-1">
+                                             Stok
+                                         </label>
+
+                                         <select id="filter_stok" class="form-select form-select-sm">
+
+                                             <option value="">Semua Stok</option>
+                                             <option value="habis">Stok Habis</option>
+                                         </select>
+                                     </div>  
+
+                                     {{-- Tombol Filter --}}
+                                     <div class="col-md-2 d-flex align-items-end">
+
+                                         <button type="button" id="btn-filter" class="btn btn-sm btn-primary me-1">
+
+                                             <i class="mdi mdi-filter-outline"></i>
+                                             Filter
+
+                                         </button>
+
+                                         <button type="button" id="btn-reset" class="btn btn-sm btn-light">
+
+                                             <i class="mdi mdi-refresh"></i>
+
+                                         </button>
+
+                                     </div>
+
+                                 </div>
+
+
+                                 {{-- Export --}}
+                                 <div class="d-flex justify-content-end mb-3">
+
+                                     <button type="button" id="btn-export-excel" class="btn btn-success btn-sm me-2">
+
+                                         <i class="mdi mdi-file-excel-outline"></i>
+                                         Export Excel
+
+                                     </button>
+
+                                     <button type="button" id="btn-export-pdf" class="btn btn-danger btn-sm">
+
+                                         <i class="mdi mdi-file-pdf-box"></i>
+                                         Export PDF
+
+                                     </button>
+
+                                 </div>
+
                                  <div class="table-responsive">
                                      <table id="list-table"
                                          class="table table-striped table-bordered table-hover table-sm align-middle mb-0 nowrap w-100">

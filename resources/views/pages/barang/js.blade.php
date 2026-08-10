@@ -2,8 +2,15 @@
     var table = $('#list-table').DataTable({
         processing: true,
         serverSide: true,
-
-        ajax: '{{ route('barang.table') }}',
+        ajax: {
+            url: "{{ route('barang.table') }}",
+            data: function(d) {
+                d.kategori = $('#filter_kategori').val();
+                d.supplier = $('#filter_supplier').val();
+                d.stok = $('#filter_stok').val();
+               
+            }
+        },
         order: [
             [1, 'desc']
         ],
@@ -15,13 +22,15 @@
             },
             {
                 data: 'kd_barang',
-                name: 'kd_barang'
+                name: 'kd_barang',
+                
             },
 
 
             {
                 data: 'nm_barang',
-                name: 'nm_barang'
+                name: 'nm_barang',
+                
             },
             {
                 data: 'kd_kategori',
@@ -174,7 +183,7 @@
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
-                        kd_barang:kdBarang
+                        kd_barang: kdBarang
                     },
                     success: function(response) {
                         Swal.fire('Berhasil!', response.message, 'success');
@@ -210,4 +219,42 @@
 
         $('#slug').val(slug);
     });
+
+
+
+    $('#btn-filter').on('click', function() {
+        table.ajax.reload();
+    });
+    $('#btn-reset').on('click', function() {
+        $('#filter_kategori').val('');
+        $('#filter_supplier').val('');
+        $('#filter_stok').val('');
+
+        table.ajax.reload();
+    });
+
+
+    $('#btn-export-excel').on('click', function() {
+        exportMasterBarang('excel');
+    });
+
+    $('#btn-export-pdf').on('click', function() {
+        exportMasterBarang('pdf');
+    });
+
+    function exportMasterBarang(type) {
+        let params = new URLSearchParams({
+            kategori: $('#filter_kategori').val(),
+            supplier: $('#filter_supplier').val(),
+            stok: $('#filter_stok').val(),
+
+        });
+        let url;
+        if (type === 'excel') {
+            url = "{{ url('barang/export/excel') }}";
+        } else {
+            url = "{{ url('barang/export/pdf') }}";
+        }
+        window.open(url + '?' + params.toString(), '_blank');
+    }
 </script>

@@ -15,7 +15,7 @@ class Pembayaran extends Model
     public $timestamps = false;
 
 
-    public function pelanggan():BelongsTo
+    public function customer():BelongsTo
     {
         return $this->belongsTo(Pelanggan::class, 'pelanggan', 'kd_pelanggan');
     }

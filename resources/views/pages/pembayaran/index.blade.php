@@ -16,7 +16,7 @@
                      <div class="text-end">
                          <ol class="breadcrumb m-0 py-0">
                              <li class="breadcrumb-item"><a href="javascript: void(0);">Keuangan</a></li>
-                             <li class="breadcrumb-item active">Piutang</li>
+                             <li class="breadcrumb-item active">Pembayaran</li>
                          </ol>
                      </div>
                  </div>
@@ -30,15 +30,15 @@
                                  <div>
                                      <h5 class="mb-0 fw-bold">
                                          <i class="mdi mdi-cash-register text-primary"></i>
-                                         Daftar Piutang
+                                         Daftar Pembayaran
                                      </h5>
-                                     <small class="text-muted">Daftar seluruh transaksi piutang baik yang sudah lunas atau belum</small>
+                                     <small class="text-muted">Daftar seluruh transaksi pembayaran baik yang sudah lunas atau belum</small>
                                  </div>
 
-                                 {{-- <a href="{{ url('pembayaran') }}"><button type="button"
+                                 <a href="{{ url('piutang') }}"><button type="button"
                                          class="btn btn-primary btn-sm rounded-pill btn-tambah">
-                                         <i class="mdi mdi-cash"></i> Daftar Pembayaran
-                                     </button></a> --}}
+                                         <i class="mdi mdi-cash"></i> Tambah Pembayaran
+                                     </button></a>
                              </div>
 
                             
@@ -86,37 +86,7 @@
                                          </select>
                                      </div>
 
-                                     {{-- tempo --}}
-                                     <div class="col-md-2">
-                                         <label class="form-label mb-1">
-                                             Tempo
-                                         </label>
-
-                                         <select id="filter_tempo" class="form-select form-select-sm">
-
-                                             <option value="">Semua</option>
-                                            <option value="jatuh-tempo">Jatuh Tempo</option>
-                                            
-
-                                         </select>
-                                     </div>
-
-
-                                     {{-- lunas --}}
-                                     <div class="col-md-2">
-                                         <label class="form-label mb-1">
-                                             Status
-                                         </label>
-
-                                         <select id="filter_status" class="form-select form-select-sm">
-
-                                            <option value="">Semua</option>
-                                            <option value="outstanding">Belum Lunas</option>
-                                            <option value="lunas">Lunas</option>
-                                            
-
-                                         </select>
-                                     </div>
+                                     
 
                                     
 
@@ -175,13 +145,12 @@
 
                                                  <th>Action</th>
                                                  <th>Tanggal</th>
+                                                 <th>No Bayar</th>
                                                  <th>Nota</th>
                                                  <th>Pelanggan</th>
                                                  <th>Nilai</th>
                                                  <th>Bayar</th>
                                                  <th>Sisa</th>
-                                                 <th>Tempo</th>
-                                                 <th>Tgl Jatuh Tempo</th>
                                                  <th>Kasir</th>
                                                  <th>Keterangan</th>
 
@@ -208,10 +177,10 @@
 
 
          </div>
-         @include('pages.piutang.modal_pembayaran')
+         @include('pages.pembayaran.modal')
      </div>
  @endsection
 
  @push('scripts')
-     @include('pages.piutang.js')
+     @include('pages.pembayaran.js')
  @endpush

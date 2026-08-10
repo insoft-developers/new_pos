@@ -38,7 +38,7 @@
                     <img src="{{ asset('template') }}/assets/images/users/avatar-1.jpg" alt="user-image"
                         class="rounded-circle">
                     <span class="ms-1 d-none d-md-inline-block">
-                        {{ session('nm_pengguna') }} <i class="mdi mdi-chevron-down"></i>
+                        {{ session('nama_pengguna') }} <i class="mdi mdi-chevron-down"></i>
                     </span>
                 </a>
 

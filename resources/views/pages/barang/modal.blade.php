@@ -17,12 +17,12 @@
         margin-bottom: .35rem;
         font-size: .82rem;
     }
-
+/* 
     .form-control,
     .form-select {
         border-radius: 8px;
         min-height: 42px;
-    }
+    } */
 
     .input-group-text {
         background: #f8f9fa;

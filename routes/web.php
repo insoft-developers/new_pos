@@ -35,6 +35,9 @@ Route::middleware('login')->group(function () {
     Route::post('/barang_delete', [BarangController::class, 'destroy']);
     Route::get('/barang_table', [BarangController::class, 'table'])->name('barang.table');
 
+    Route::get('/barang/export/excel', [BarangController::class, 'exportExcel']);
+    Route::get('/barang/export/pdf', [BarangController::class, 'exportPdf']);
+
 
     Route::resource('/pelanggan', PelangganController::class);
     Route::get('/pelanggan_table', [PelangganController::class, 'table'])->name('pelanggan.table');
@@ -82,6 +85,10 @@ Route::middleware('login')->group(function () {
     Route::get('/piutang/export/excel', [PiutangController::class, 'exportExcel']);
     Route::get('/piutang/export/pdf', [PiutangController::class, 'exportPdf']);
     Route::get('/piutang_list/{id}', [PiutangController::class, 'piutangList']);
+
+
+    Route::get('/pembayaran/export/excel', [PembayaranController::class, 'exportExcel']);
+    Route::get('/pembayaran/export/pdf', [PembayaranController::class, 'exportPdf']);
 
 
     Route::post('/logout', [

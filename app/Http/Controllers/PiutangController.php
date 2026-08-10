@@ -77,7 +77,7 @@ class PiutangController extends Controller
                 })
 
                 ->addColumn('sisa', function ($row) {
-                    return number_format($row->sisa);
+                    return '<div class="bg-danger" style="color:white;padding:2px 4px 2px 6px;border-radius:3px;"><strong>'.number_format($row->sisa).'</strong></div>';
                 })
 
                 ->addColumn('kd_user', function ($row) {
@@ -99,7 +99,7 @@ class PiutangController extends Controller
 
                     return $button;
                 })
-                ->rawColumns(['action', 'kd_pelanggan', 'keterangan'])
+                ->rawColumns(['action', 'kd_pelanggan', 'keterangan', 'sisa'])
                 ->make(true);
         }
     }

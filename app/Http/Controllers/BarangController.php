@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\BarangExport;
 use App\Http\Controllers\Controller;
 use App\Models\Barang;
 use App\Models\Branch;
@@ -10,9 +11,11 @@ use App\Models\LeadSource;
 use App\Models\Satuan;
 use App\Models\Stok;
 use App\Models\Supplier;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\DataTables;
 
 class BarangController extends Controller
@@ -23,11 +26,45 @@ class BarangController extends Controller
 
     public function table(Request $request)
     {
+
+
         if ($request->ajax()) {
-            $data = Barang::query();
-            return DataTables::of($data)
+
+
+            $query = Barang::query();
+
+            // if (!empty($request->search['value'])) {
+
+            //     $search = $request->search['value'];
+
+            //     $query->where('nm_barang', 'like', '%' . $search . '%');
+            // }
+
+
+            if ($request->kategori) {
+                $query->where(
+                    'kd_kategori',
+                    $request->kategori
+                );
+            }
+
+
+            if ($request->supplier) {
+                $query->where(
+                    'kd_supplier',
+                    $request->supplier
+                );
+            }
+
+            if ($request->stok && $request->stok == 'habis') {
+                $query->where('stok', '<=', 0);
+            }
+
+
+
+            return DataTables::of($query)
                 ->addIndexColumn()
-                ->addColumn('nm_barang', function ($row) {
+                ->editColumn('nm_barang', function ($row) {
                     return '<div style="white-space:normal;width:180px;">' . strtoupper($row->nm_barang) . '</div>';
                 })
                 ->addColumn('satuan', function ($row) {
@@ -258,5 +295,67 @@ class BarangController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+
+    public function exportExcel(Request $request)
+    {
+        return Excel::download(new BarangExport($request), 'barang-' . date('Y-m-d-His') . '.xlsx');
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $query = Barang::query();
+
+        if ($request->kategori) {
+            $query->where(
+                'kd_kategori',
+                $request->kategori
+            );
+        }
+
+
+        if ($request->supplier) {
+            $query->where(
+                'kd_supplier',
+                $request->supplier
+            );
+        }
+
+        if ($request->stok && $request->stok == 'habis') {
+            $query->where('stok', '<=', 0);
+        }
+
+        $barang = $query
+            ->with([
+                'supplier'
+            ])
+            ->orderBy('tanggal', 'desc')
+            ->get();
+
+
+        $pdf = Pdf::loadView(
+            'pages.barang.pdf',
+            [
+                'barang' => $barang,
+                'kategori' => $request->kategori,
+
+                'supplier' => $request->supplier,
+                'stok' => $request->stok
+            ]
+        );
+
+
+        $pdf->setPaper(
+            'A4',
+            'landscape'
+        );
+
+
+        return $pdf->stream(
+            'barang-' .
+                date('Y-m-d-His') .
+                '.pdf'
+        );
     }
 }

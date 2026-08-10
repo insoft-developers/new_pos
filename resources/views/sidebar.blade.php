@@ -136,7 +136,7 @@
                         </div>
                     </li>
 
-                    <li class="menu-item">
+                    {{-- <li class="menu-item">
                         <a href="#menuExtendedui" data-bs-toggle="collapse" class="menu-link waves-effect">
                             <span class="menu-icon"><i data-lucide="pie-chart"></i></span>
                             <span class="menu-text"> Laporan </span>
@@ -166,7 +166,7 @@
                                 </li>
                             </ul>
                         </div>
-                    </li>
+                    </li> --}}
 
                     <li class="menu-item">
                         <a href="#menuIcons" data-bs-toggle="collapse" class="menu-link waves-effect">
