@@ -4,13 +4,16 @@ on:
   push:
     branches:
       - mtani
+      - sprabot
 
 jobs:
-  deploy:
+
+  deploy-mtani:
+    if: github.ref == 'refs/heads/mtani'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to Rumahweb
+      - name: Deploy MTani
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -19,3 +22,19 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             /home/gens7193/public_html/mtani.gen-zi.id/deploy.sh
+
+
+  deploy-sprabot:
+    if: github.ref == 'refs/heads/sprabot'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy Sprabot
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            /home/gens7193/public_html/pkb4.gen-zi.id/deploy.sh
