@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\PembayaranExport;
 use App\Models\Pelanggan;
 use App\Models\Pembayaran;
+use App\Models\Pengaturan;
 use App\Models\Piutang;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -293,7 +294,19 @@ class PembayaranController extends Controller
     {
 
         $pembayaran = Pembayaran::where('no_pembayaran', $nobayar)->first();
-        return view('pages.pembayaran.struk', compact('pembayaran'));
+
+
+
+
+        $pengaturan = Pengaturan::first();
+
+        $view = 'pages.pembayaran.struk_kecil';
+
+        // Kalau setting printer = besar
+        if ($pengaturan?->printer_setting === 'besar') {
+            $view = 'pages.pembayaran.struk';
+        }
+        return view($view, compact('pembayaran'));
 
     }
 }

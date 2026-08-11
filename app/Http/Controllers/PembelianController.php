@@ -6,6 +6,7 @@ use App\Exports\PembelianExport;
 use App\Models\Barang;
 use App\Models\Pembelian;
 use App\Models\PembelianItem;
+use App\Models\Pengaturan;
 use App\Models\Pengguna;
 use App\Models\Supplier;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -514,7 +515,17 @@ class PembelianController extends Controller
             $pembelian->kd_supplier
         )->first();
 
-        return view('pages.pembelian.struk', compact(
+        $pengaturan = Pengaturan::first();
+
+        $view = 'pages.pembelian.struk_kecil';
+
+        // Kalau setting printer = besar
+        if ($pengaturan?->printer_setting === 'besar') {
+            $view = 'pages.pembelian.struk';
+        }
+
+
+        return view($view, compact(
             'pembelian',
             'items',
             'supplier'

@@ -809,8 +809,8 @@
     );
 
 
-    
-    
+
+
 
 
     /* ============================================================
@@ -1023,7 +1023,14 @@
                                 "{{ url('/penjualan/struk') }}/" + response.nota,
                                 '_blank'
                             );
+
+
                         }
+
+                        setTimeout(function() {
+                            location.reload();
+                        }, 300);
+
 
                         cart = [];
 
@@ -1229,8 +1236,7 @@
     }
 
 
-    function addCustomer()
-    {
+    function addCustomer() {
         $(".modal-title").text('Tambah Pelanggan Baru');
         $("#modal-add-customer").modal("show");
     }
@@ -1255,7 +1261,7 @@
                         showConfirmButton: false,
                         scrollbarPadding: false,
                     });
-                   
+
                 } else {
                     Swal.fire({
                         icon: 'error',
@@ -1290,10 +1296,9 @@
     });
 
 
-    function customerListRefresh(data)
-    {
+    function customerListRefresh(data) {
         var html = '';
-        data.forEach(function(item){
+        data.forEach(function(item) {
             html += `<option value="${item.kd_pelanggan}">${item.nm_pelanggan}</option>`;
         });
 

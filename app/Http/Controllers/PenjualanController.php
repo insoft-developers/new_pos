@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\PenjualanExport;
 use App\Models\Barang;
 use App\Models\Pelanggan;
+use App\Models\Pengaturan;
 use App\Models\Pengguna;
 use App\Models\Penjualan;
 use App\Models\PenjualanItem;
@@ -108,7 +109,7 @@ class PenjualanController extends Controller
                     return $row->status_pembayaran;
                 })
 
-                ->addColumn('kd_user', function($row){
+                ->addColumn('kd_user', function ($row) {
                     return $row->kasir?->nama ?? '';
                 })
 
@@ -365,7 +366,19 @@ class PenjualanController extends Controller
             $penjualan->kd_pelanggan
         )->first();
 
-        return view('pages.penjualan.struk', compact(
+
+
+        $pengaturan = Pengaturan::first();
+
+        $view = 'pages.penjualan.struk_kecil';
+
+        // Kalau setting printer = besar
+        if ($pengaturan?->printer_setting === 'besar') {
+            $view = 'pages.penjualan.struk';
+        }
+
+        // Kalau kecil atau belum ada → struk_kecil
+        return view($view, compact(
             'penjualan',
             'items',
             'pelanggan'
@@ -522,7 +535,7 @@ class PenjualanController extends Controller
 
         DB::beginTransaction();
         try {
-            
+
 
             Penjualan::where('nota', $nota)->delete();
             PenjualanItem::where('nota', $nota)->delete();
@@ -532,8 +545,6 @@ class PenjualanController extends Controller
                 "success" => true,
                 "message" => "Hapus Berhasil"
             ]);
-
-
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
@@ -541,6 +552,5 @@ class PenjualanController extends Controller
                 "message" => $th->getMessage()
             ]);
         }
-
     }
 }

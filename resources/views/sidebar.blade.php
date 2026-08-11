@@ -187,6 +187,12 @@
                                         <span class="menu-text">Ganti Password</span>
                                     </a>
                                 </li>
+
+                                <li class="menu-item">
+                                    <a href="{{ url('pengaturan_printer') }}" class="menu-link">
+                                        <span class="menu-text">Pengaturan Printer</span>
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </li>

@@ -6,6 +6,7 @@ use App\Http\Controllers\MainController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\PiutangController;
@@ -100,6 +101,9 @@ Route::middleware('login')->group(function () {
 
     Route::get('/change_password', [ProfileController::class, 'change']);
     Route::post('/password_update', [ProfileController::class, 'passwordUpdate']);
+
+    Route::get('/pengaturan_printer', [PengaturanController::class, 'printer']);
+    Route::post('/pengaturan_printer_update', [PengaturanController::class, 'printerUpdate'])->name('pengaturan.printer.update');
 
 
     Route::post('/logout', [
