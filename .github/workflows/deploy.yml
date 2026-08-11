@@ -1,0 +1,21 @@
+name: Deploy Laravel
+
+on:
+  push:
+    branches:
+      - mtani
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Rumahweb
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            /home/gens7193/public_html/mtani.gen-zi.id/deploy.sh
