@@ -3,39 +3,227 @@
 
 @section('content')
 
+<style>
+    .dashboard-card {
+        border: 0;
+        border-radius: 14px;
+        transition: all .2s ease;
+    }
+
+    .dashboard-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, .07) !important;
+    }
+
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-card::after {
+        content: "";
+        position: absolute;
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        right: -30px;
+        top: -35px;
+        background: rgba(0, 0, 0, .025);
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #7b8190;
+        font-weight: 500;
+        margin-bottom: 6px;
+    }
+
+    .stat-value {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -.3px;
+    }
+
+    .stat-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 11px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .dashboard-section {
+        border-radius: 14px;
+        border: 0;
+        overflow: hidden;
+    }
+
+    .section-header {
+        padding: 15px 17px;
+        background: #fff;
+        border-bottom: 1px solid #f0f1f3;
+    }
+
+    .section-title {
+        font-size: 14px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .section-subtitle {
+        font-size: 11px;
+        color: #9298a3;
+        margin-top: 2px;
+    }
+
+    .dashboard-table {
+        margin: 0;
+    }
+
+    .dashboard-table td {
+        padding: 11px 15px;
+        vertical-align: middle;
+        border-color: #f2f3f5;
+        font-size: 12px;
+    }
+
+    .dashboard-table tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .item-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: #30343b;
+    }
+
+    .item-code {
+        font-size: 10px;
+        color: #9aa0aa;
+        margin-top: 2px;
+    }
+
+    .empty-state {
+        padding: 30px 15px !important;
+        text-align: center;
+        color: #a0a5ae;
+    }
+
+    .empty-icon {
+        width: 38px;
+        height: 38px;
+        margin: 0 auto 8px;
+        border-radius: 50%;
+        background: #f6f7f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .rank {
+        width: 25px;
+        height: 25px;
+        border-radius: 7px;
+        background: #f4f6f8;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        color: #68707c;
+    }
+
+    .dashboard-badge {
+        font-size: 10px;
+        font-weight: 600;
+        padding: 5px 8px;
+        border-radius: 7px;
+    }
+
+    .danger-value {
+        color: #dc3545;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .success-value {
+        color: #198754;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .recent-date {
+        font-size: 10px;
+        color: #9aa0aa;
+        margin-top: 2px;
+    }
+
+    .dashboard-header {
+        margin-bottom: 18px;
+    }
+
+    .dashboard-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .dashboard-desc {
+        color: #8b919c;
+        font-size: 12px;
+    }
+
+    .section-link {
+        font-size: 11px;
+        color: #6c757d;
+        text-decoration: none;
+    }
+
+    .section-link:hover {
+        color: #0d6efd;
+    }
+</style>
+
+
 <div class="content-page">
 
     <div class="content">
 
-        <div class="container-fluid">
+        <div class="container-fluid py-3">
+
 
             {{-- ================================================= --}}
             {{-- HEADER --}}
             {{-- ================================================= --}}
 
-            <div class="py-3 d-flex align-items-sm-center flex-sm-row flex-column">
+            <div class="dashboard-header">
 
-                <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-center">
 
-                    <h4 class="fs-18 fw-semibold m-0">
-                        Dashboard
-                    </h4>
+                    <div>
 
-                    <small class="text-muted">
-                        Ringkasan aktivitas toko
-                    </small>
+                        <div class="dashboard-title">
+                            Dashboard
+                        </div>
 
-                </div>
+                        <div class="dashboard-desc">
+                            Ringkasan aktivitas toko hari ini
+                        </div>
 
-                <div class="text-end">
+                    </div>
 
-                    <ol class="breadcrumb m-0 py-0">
+                    <div class="text-muted small">
 
-                        <li class="breadcrumb-item">
-                            
-                        </li>
+                        <i class="mdi mdi-calendar-outline me-1"></i>
 
-                    </ol>
+                        {{ now()->translatedFormat('d F Y') }}
+
+                    </div>
 
                 </div>
 
@@ -43,7 +231,7 @@
 
 
             {{-- ================================================= --}}
-            {{-- SUMMARY CARDS --}}
+            {{-- STAT CARDS --}}
             {{-- ================================================= --}}
 
             <div class="row g-3 mb-3">
@@ -52,35 +240,29 @@
                 {{-- PENJUALAN HARI INI --}}
                 <div class="col-xl-3 col-md-6">
 
-                    <div class="card border-0 shadow-sm mb-0">
+                    <div class="card dashboard-card stat-card shadow-sm h-100">
 
-                        <div class="card-body py-3">
+                        <div class="card-body p-3">
 
                             <div class="d-flex align-items-center">
 
                                 <div class="flex-grow-1">
 
-                                    <div class="text-muted small mb-1">
-                                        Penjualan Hari Ini
+                                    <div class="stat-label">
+                                        PENJUALAN HARI INI
                                     </div>
 
-                                    <h5 class="mb-0 fw-bold">
-                                        Rp 0
-                                    </h5>
+                                    <div class="stat-value">
+
+                                        Rp {{ number_format($penjualanHariIni ?? 0, 0, ',', '.') }}
+
+                                    </div>
 
                                 </div>
 
-                                <div>
+                                <div class="stat-icon bg-primary-subtle text-primary">
 
-                                    <span class="avatar-sm">
-
-                                        <span class="avatar-title rounded bg-primary-subtle text-primary">
-
-                                            <i class="mdi mdi-cart-check-outline fs-20"></i>
-
-                                        </span>
-
-                                    </span>
+                                    <i class="mdi mdi-cart-outline"></i>
 
                                 </div>
 
@@ -96,35 +278,29 @@
                 {{-- PENJUALAN BULAN INI --}}
                 <div class="col-xl-3 col-md-6">
 
-                    <div class="card border-0 shadow-sm mb-0">
+                    <div class="card dashboard-card stat-card shadow-sm h-100">
 
-                        <div class="card-body py-3">
+                        <div class="card-body p-3">
 
                             <div class="d-flex align-items-center">
 
                                 <div class="flex-grow-1">
 
-                                    <div class="text-muted small mb-1">
-                                        Penjualan Bulan Ini
+                                    <div class="stat-label">
+                                        PENJUALAN BULAN INI
                                     </div>
 
-                                    <h5 class="mb-0 fw-bold">
-                                        Rp 0
-                                    </h5>
+                                    <div class="stat-value">
+
+                                        Rp {{ number_format($penjualanBulanIni ?? 0, 0, ',', '.') }}
+
+                                    </div>
 
                                 </div>
 
-                                <div>
+                                <div class="stat-icon bg-success-subtle text-success">
 
-                                    <span class="avatar-sm">
-
-                                        <span class="avatar-title rounded bg-success-subtle text-success">
-
-                                            <i class="mdi mdi-chart-line fs-20"></i>
-
-                                        </span>
-
-                                    </span>
+                                    <i class="mdi mdi-chart-line"></i>
 
                                 </div>
 
@@ -137,38 +313,32 @@
                 </div>
 
 
-                {{-- PEMBAYARAN BULAN INI --}}
+                {{-- PEMBAYARAN --}}
                 <div class="col-xl-3 col-md-6">
 
-                    <div class="card border-0 shadow-sm mb-0">
+                    <div class="card dashboard-card stat-card shadow-sm h-100">
 
-                        <div class="card-body py-3">
+                        <div class="card-body p-3">
 
                             <div class="d-flex align-items-center">
 
                                 <div class="flex-grow-1">
 
-                                    <div class="text-muted small mb-1">
-                                        Pembayaran Bulan Ini
+                                    <div class="stat-label">
+                                        PEMBAYARAN BULAN INI
                                     </div>
 
-                                    <h5 class="mb-0 fw-bold">
-                                        Rp 0
-                                    </h5>
+                                    <div class="stat-value">
+
+                                        Rp {{ number_format($pembayaranBulanIni ?? 0, 0, ',', '.') }}
+
+                                    </div>
 
                                 </div>
 
-                                <div>
+                                <div class="stat-icon bg-info-subtle text-info">
 
-                                    <span class="avatar-sm">
-
-                                        <span class="avatar-title rounded bg-info-subtle text-info">
-
-                                            <i class="mdi mdi-cash-check fs-20"></i>
-
-                                        </span>
-
-                                    </span>
+                                    <i class="mdi mdi-cash-check"></i>
 
                                 </div>
 
@@ -181,38 +351,32 @@
                 </div>
 
 
-                {{-- PEMBELIAN BULAN INI --}}
+                {{-- PEMBELIAN --}}
                 <div class="col-xl-3 col-md-6">
 
-                    <div class="card border-0 shadow-sm mb-0">
+                    <div class="card dashboard-card stat-card shadow-sm h-100">
 
-                        <div class="card-body py-3">
+                        <div class="card-body p-3">
 
                             <div class="d-flex align-items-center">
 
                                 <div class="flex-grow-1">
 
-                                    <div class="text-muted small mb-1">
-                                        Pembelian Bulan Ini
+                                    <div class="stat-label">
+                                        PEMBELIAN BULAN INI
                                     </div>
 
-                                    <h5 class="mb-0 fw-bold">
-                                        Rp 0
-                                    </h5>
+                                    <div class="stat-value">
+
+                                        Rp {{ number_format($pembelianBulanIni ?? 0, 0, ',', '.') }}
+
+                                    </div>
 
                                 </div>
 
-                                <div>
+                                <div class="stat-icon bg-warning-subtle text-warning">
 
-                                    <span class="avatar-sm">
-
-                                        <span class="avatar-title rounded bg-warning-subtle text-warning">
-
-                                            <i class="mdi mdi-truck-check-outline fs-20"></i>
-
-                                        </span>
-
-                                    </span>
+                                    <i class="mdi mdi-truck-check-outline"></i>
 
                                 </div>
 
@@ -228,7 +392,7 @@
 
 
             {{-- ================================================= --}}
-            {{-- CONTENT --}}
+            {{-- MAIN PANELS --}}
             {{-- ================================================= --}}
 
             <div class="row g-3">
@@ -240,23 +404,32 @@
 
                 <div class="col-xl-3 col-lg-6">
 
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card dashboard-section shadow-sm h-100">
 
-                        <div class="card-header bg-white border-bottom py-3">
+                        <div class="section-header">
 
                             <div class="d-flex align-items-center">
 
                                 <div class="flex-grow-1">
 
-                                    <h6 class="mb-0 fw-bold">
+                                    <div class="section-title">
+
                                         <i class="mdi mdi-package-variant-closed-remove text-danger me-1"></i>
+
                                         Stok Kosong
-                                    </h6>
+
+                                    </div>
+
+                                    <div class="section-subtitle">
+                                        Produk yang perlu direstock
+                                    </div>
 
                                 </div>
 
-                                <span class="badge bg-danger-subtle text-danger">
-                                    0
+                                <span class="dashboard-badge bg-danger-subtle text-danger">
+
+                                    {{ $jumlahStokKosong ?? 0 }} item
+
                                 </span>
 
                             </div>
@@ -264,82 +437,63 @@
                         </div>
 
 
-                        <div class="card-body p-0">
+                        <div class="table-responsive">
 
-                            <div class="table-responsive">
+                            <table class="table dashboard-table">
 
-                                <table class="table table-sm table-hover mb-0">
+                                <tbody>
 
-                                    <tbody>
-
-                                        {{-- DATA BACKEND NANTI --}}
+                                    @forelse($stokKosong ?? [] as $item)
 
                                         <tr>
 
                                             <td>
 
-                                                <div class="fw-semibold">
-                                                    Contoh Produk
+                                                <div class="item-name">
+                                                    {{ $item->nm_barang }}
                                                 </div>
 
-                                                <small class="text-muted">
-                                                    BRG001
-                                                </small>
+                                                <div class="item-code">
+                                                    {{ $item->kd_barang }}
+                                                </div>
 
                                             </td>
 
                                             <td class="text-end">
 
-                                                <span class="badge bg-danger">
-                                                    0
+                                                <span class="dashboard-badge bg-danger-subtle text-danger">
+
+                                                    {{ number_format($item->stok, 0, ',', '.') }}
+
                                                 </span>
 
                                             </td>
 
                                         </tr>
 
+                                    @empty
 
                                         <tr>
 
-                                            <td>
+                                            <td class="empty-state">
 
-                                                <div class="fw-semibold">
-                                                    Contoh Produk 2
+                                                <div class="empty-icon text-success">
+
+                                                    <i class="mdi mdi-check"></i>
+
                                                 </div>
 
-                                                <small class="text-muted">
-                                                    BRG002
-                                                </small>
-
-                                            </td>
-
-                                            <td class="text-end">
-
-                                                <span class="badge bg-danger">
-                                                    0
-                                                </span>
+                                                Tidak ada stok kosong
 
                                             </td>
 
                                         </tr>
 
+                                    @endforelse
 
-                                        <tr>
+                                </tbody>
 
-                                            <td colspan="2"
-                                                class="text-center text-muted py-4">
-
-                                                Tidak ada data
-
-                                            </td>
-
-                                        </tr>
-
-                                    </tbody>
-
-                                </table>
-
-                            </div>
+                            </table>
 
                         </div>
 
@@ -349,31 +503,37 @@
 
 
                 {{-- ================================================= --}}
-                {{-- PIUTANG JATUH TEMPO --}}
+                {{-- PIUTANG --}}
                 {{-- ================================================= --}}
 
                 <div class="col-xl-3 col-lg-6">
 
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card dashboard-section shadow-sm h-100">
 
-                        <div class="card-header bg-white border-bottom py-3">
+                        <div class="section-header">
 
                             <div class="d-flex align-items-center">
 
                                 <div class="flex-grow-1">
 
-                                    <h6 class="mb-0 fw-bold">
+                                    <div class="section-title">
 
                                         <i class="mdi mdi-calendar-alert text-danger me-1"></i>
 
                                         Piutang Jatuh Tempo
 
-                                    </h6>
+                                    </div>
+
+                                    <div class="section-subtitle">
+                                        Tagihan yang harus ditagih
+                                    </div>
 
                                 </div>
 
-                                <span class="badge bg-danger-subtle text-danger">
-                                    0
+                                <span class="dashboard-badge bg-danger-subtle text-danger">
+
+                                    Rp {{ number_format($totalPiutangJatuhTempo ?? 0, 0, ',', '.') }}
+
                                 </span>
 
                             </div>
@@ -381,78 +541,61 @@
                         </div>
 
 
-                        <div class="card-body p-0">
+                        <div class="table-responsive">
 
-                            <div class="table-responsive">
+                            <table class="table dashboard-table">
 
-                                <table class="table table-sm table-hover mb-0">
+                                <tbody>
 
-                                    <tbody>
-
-                                        {{-- DATA BACKEND NANTI --}}
+                                    @forelse($piutangJatuhTempo ?? [] as $item)
 
                                         <tr>
 
                                             <td>
 
-                                                <div class="fw-semibold">
-                                                    Pelanggan Contoh
+                                                <div class="item-name">
+
+                                                    {{ $item->kd_pelanggan ?? 'Pelanggan Umum' }}
+
                                                 </div>
 
-                                                <small class="text-muted">
-                                                    INV0001
-                                                </small>
+                                                <div class="item-code">
+
+                                                    {{ $item->nota }}
+
+                                                </div>
 
                                             </td>
 
                                             <td class="text-end">
 
-                                                <div class="fw-semibold text-danger">
-                                                    Rp 0
+                                                <div class="danger-value">
+
+                                                    Rp {{ number_format(($item->belanja - $item->bayar), 0, ',', '.') }}
+
                                                 </div>
 
-                                                <small class="text-muted">
-                                                    01/01/2026
-                                                </small>
+                                                <div class="recent-date">
+
+                                                    {{ \Carbon\Carbon::parse($item->jatuh_tempo)->format('d/m/Y') }}
+
+                                                </div>
 
                                             </td>
 
                                         </tr>
 
+                                    @empty
 
                                         <tr>
 
-                                            <td>
+                                            <td class="empty-state">
 
-                                                <div class="fw-semibold">
-                                                    Pelanggan Contoh 2
+                                                <div class="empty-icon text-success">
+
+                                                    <i class="mdi mdi-check"></i>
+
                                                 </div>
-
-                                                <small class="text-muted">
-                                                    INV0002
-                                                </small>
-
-                                            </td>
-
-                                            <td class="text-end">
-
-                                                <div class="fw-semibold text-danger">
-                                                    Rp 0
-                                                </div>
-
-                                                <small class="text-muted">
-                                                    02/01/2026
-                                                </small>
-
-                                            </td>
-
-                                        </tr>
-
-
-                                        <tr>
-
-                                            <td colspan="2"
-                                                class="text-center text-muted py-4">
 
                                                 Tidak ada piutang jatuh tempo
 
@@ -460,11 +603,11 @@
 
                                         </tr>
 
-                                    </tbody>
+                                    @endforelse
 
-                                </table>
+                                </tbody>
 
-                            </div>
+                            </table>
 
                         </div>
 
@@ -479,138 +622,86 @@
 
                 <div class="col-xl-3 col-lg-6">
 
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card dashboard-section shadow-sm h-100">
 
-                        <div class="card-header bg-white border-bottom py-3">
+                        <div class="section-header">
 
-                            <div class="d-flex align-items-center">
+                            <div class="section-title">
 
-                                <div class="flex-grow-1">
+                                <i class="mdi mdi-star-outline text-warning me-1"></i>
 
-                                    <h6 class="mb-0 fw-bold">
+                                Produk Terlaris
 
-                                        <i class="mdi mdi-star-outline text-warning me-1"></i>
+                            </div>
 
-                                        Produk Terlaris
+                            <div class="section-subtitle">
 
-                                    </h6>
-
-                                </div>
+                                Produk dengan penjualan tertinggi bulan ini
 
                             </div>
 
                         </div>
 
 
-                        <div class="card-body p-0">
+                        <div class="table-responsive">
 
-                            <div class="table-responsive">
+                            <table class="table dashboard-table">
 
-                                <table class="table table-sm table-hover mb-0">
+                                <tbody>
 
-                                    <tbody>
-
-                                        {{-- DATA BACKEND NANTI --}}
+                                    @forelse($produkTerlaris ?? [] as $index => $item)
 
                                         <tr>
 
-                                            <td width="30">
+                                            <td width="40">
 
-                                                <span class="fw-bold">
-                                                    1
+                                                <span class="rank">
+
+                                                    {{ $index + 1 }}
+
                                                 </span>
 
                                             </td>
 
                                             <td>
 
-                                                <div class="fw-semibold">
-                                                    Contoh Produk
+                                                <div class="item-name">
+
+                                                    {{ $item->nm_barang }}
+
                                                 </div>
 
-                                                <small class="text-muted">
-                                                    BRG001
-                                                </small>
+                                                <div class="item-code">
+
+                                                    {{ $item->kd_barang }}
+
+                                                </div>
 
                                             </td>
 
                                             <td class="text-end">
 
-                                                <span class="badge bg-primary-subtle text-primary">
-                                                    100
+                                                <span class="dashboard-badge bg-primary-subtle text-primary">
+
+                                                    {{ number_format($item->total_terjual, 0, ',', '.') }}
+
                                                 </span>
 
                                             </td>
 
                                         </tr>
 
+                                    @empty
 
                                         <tr>
 
-                                            <td>
-                                                <span class="fw-bold">
-                                                    2
-                                                </span>
-                                            </td>
+                                            <td class="empty-state">
 
-                                            <td>
+                                                <div class="empty-icon">
 
-                                                <div class="fw-semibold">
-                                                    Contoh Produk 2
+                                                    <i class="mdi mdi-chart-bar"></i>
+
                                                 </div>
-
-                                                <small class="text-muted">
-                                                    BRG002
-                                                </small>
-
-                                            </td>
-
-                                            <td class="text-end">
-
-                                                <span class="badge bg-primary-subtle text-primary">
-                                                    80
-                                                </span>
-
-                                            </td>
-
-                                        </tr>
-
-
-                                        <tr>
-
-                                            <td>
-                                                <span class="fw-bold">
-                                                    3
-                                                </span>
-                                            </td>
-
-                                            <td>
-
-                                                <div class="fw-semibold">
-                                                    Contoh Produk 3
-                                                </div>
-
-                                                <small class="text-muted">
-                                                    BRG003
-                                                </small>
-
-                                            </td>
-
-                                            <td class="text-end">
-
-                                                <span class="badge bg-primary-subtle text-primary">
-                                                    60
-                                                </span>
-
-                                            </td>
-
-                                        </tr>
-
-
-                                        <tr>
-
-                                            <td colspan="3"
-                                                class="text-center text-muted py-4">
 
                                                 Belum ada data penjualan
 
@@ -618,11 +709,11 @@
 
                                         </tr>
 
-                                    </tbody>
+                                    @endforelse
 
-                                </table>
+                                </tbody>
 
-                            </div>
+                            </table>
 
                         </div>
 
@@ -637,130 +728,82 @@
 
                 <div class="col-xl-3 col-lg-6">
 
-                    <div class="card border-0 shadow-sm h-100">
+                    <div class="card dashboard-section shadow-sm h-100">
 
-                        <div class="card-header bg-white border-bottom py-3">
+                        <div class="section-header">
 
-                            <div class="d-flex align-items-center">
+                            <div class="section-title">
 
-                                <div class="flex-grow-1">
+                                <i class="mdi mdi-receipt-text-outline text-primary me-1"></i>
 
-                                    <h6 class="mb-0 fw-bold">
+                                Recent Penjualan
 
-                                        <i class="mdi mdi-receipt-text-outline text-primary me-1"></i>
+                            </div>
 
-                                        Recent Penjualan
+                            <div class="section-subtitle">
 
-                                    </h6>
-
-                                </div>
+                                Transaksi penjualan terbaru
 
                             </div>
 
                         </div>
 
 
-                        <div class="card-body p-0">
+                        <div class="table-responsive">
 
-                            <div class="table-responsive">
+                            <table class="table dashboard-table">
 
-                                <table class="table table-sm table-hover mb-0">
+                                <tbody>
 
-                                    <tbody>
-
-                                        {{-- DATA BACKEND NANTI --}}
+                                    @forelse($recentPenjualan ?? [] as $item)
 
                                         <tr>
 
                                             <td>
 
-                                                <div class="fw-semibold">
-                                                    INV0001
+                                                <div class="item-name">
+
+                                                    {{ $item->nota }}
+
                                                 </div>
 
-                                                <small class="text-muted">
-                                                    Pelanggan Umum
-                                                </small>
+                                                <div class="item-code">
+
+                                                    {{ $item->kd_pelanggan ?? 'Pelanggan Umum' }}
+
+                                                </div>
 
                                             </td>
 
                                             <td class="text-end">
 
-                                                <div class="fw-semibold">
-                                                    Rp 0
+                                                <div class="success-value">
+
+                                                    Rp {{ number_format($item->belanja, 0, ',', '.') }}
+
                                                 </div>
 
-                                                <small class="text-muted">
-                                                    Hari ini
-                                                </small>
+                                                <div class="recent-date">
+
+                                                    {{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}
+
+                                                </div>
 
                                             </td>
 
                                         </tr>
 
+                                    @empty
 
                                         <tr>
 
-                                            <td>
+                                            <td class="empty-state">
 
-                                                <div class="fw-semibold">
-                                                    INV0002
+                                                <div class="empty-icon">
+
+                                                    <i class="mdi mdi-receipt-outline"></i>
+
                                                 </div>
-
-                                                <small class="text-muted">
-                                                    Pelanggan Umum
-                                                </small>
-
-                                            </td>
-
-                                            <td class="text-end">
-
-                                                <div class="fw-semibold">
-                                                    Rp 0
-                                                </div>
-
-                                                <small class="text-muted">
-                                                    Hari ini
-                                                </small>
-
-                                            </td>
-
-                                        </tr>
-
-
-                                        <tr>
-
-                                            <td>
-
-                                                <div class="fw-semibold">
-                                                    INV0003
-                                                </div>
-
-                                                <small class="text-muted">
-                                                    Pelanggan Umum
-                                                </small>
-
-                                            </td>
-
-                                            <td class="text-end">
-
-                                                <div class="fw-semibold">
-                                                    Rp 0
-                                                </div>
-
-                                                <small class="text-muted">
-                                                    Hari ini
-                                                </small>
-
-                                            </td>
-
-                                        </tr>
-
-
-                                        <tr>
-
-                                            <td colspan="2"
-                                                class="text-center text-muted py-4">
 
                                                 Belum ada transaksi
 
@@ -768,11 +811,11 @@
 
                                         </tr>
 
-                                    </tbody>
+                                    @endforelse
 
-                                </table>
+                                </tbody>
 
-                            </div>
+                            </table>
 
                         </div>
 
