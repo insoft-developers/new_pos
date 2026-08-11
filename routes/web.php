@@ -9,6 +9,7 @@ use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\PiutangController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
@@ -89,6 +90,16 @@ Route::middleware('login')->group(function () {
 
     Route::get('/pembayaran/export/excel', [PembayaranController::class, 'exportExcel']);
     Route::get('/pembayaran/export/pdf', [PembayaranController::class, 'exportPdf']);
+
+     Route::get('/pembayaran/struk/{nota}', [PembayaranController::class, 'struk'])
+        ->name('pembayaran.struk');
+
+    Route::get('/profile', [ProfileController::class, 'index']);
+    Route::get('/profile_data', [ProfileController::class, 'profile']);
+    Route::post('/profile_update', [ProfileController::class, 'update']);
+
+    Route::get('/change_password', [ProfileController::class, 'change']);
+    Route::post('/password_update', [ProfileController::class, 'passwordUpdate']);
 
 
     Route::post('/logout', [

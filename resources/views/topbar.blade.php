@@ -49,21 +49,16 @@
                     </div>
 
                     <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
+                    <a href="{{ url('profile') }}" class="dropdown-item notify-item">
                         <i data-lucide="user" class="font-size-16 me-2"></i>
-                        <span>My Account</span>
+                        <span>Profil</span>
                     </a>
 
+                   
                     <!-- item-->
-                    <a href="javascript:void(0);" class="dropdown-item notify-item">
-                        <i data-lucide="settings" class="font-size-16 me-2"></i>
-                        <span>Settings</span>
-                    </a>
-
-                    <!-- item-->
-                    <a href="pages-lock-screen.html" class="dropdown-item notify-item">
+                    <a href="{{ url('change_password') }}" class="dropdown-item notify-item">
                         <i data-lucide="lock" class="font-size-16 me-2"></i>
-                        <span>Lock Screen</span>
+                        <span>Ganti Password</span>
                     </a>
 
                     <div class="dropdown-divider"></div>

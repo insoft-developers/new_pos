@@ -75,13 +75,13 @@ class PembayaranController extends Controller
                 ->addColumn('action', function ($row) {
                     $button = '
                         <center>
-                        <button onclick="printData(' . $row->id . ')"
+                        <a target="_blank" href="' . url('pembayaran/struk/' . $row->no_pembayaran) . '"><button 
                             class="btn btn-success btn-sm"
                             title="Print">
                             <i class="mdi mdi-cash"></i>
-                        </button>
+                        </button></a>
 
-                        <button onclick="delete(' . $row->id . ')"
+                        <button onclick="deleteData(' . $row->id . ')"
                             class="btn btn-danger btn-sm"
                             title="hapus">
                             <i class="mdi mdi-delete"></i>
@@ -169,7 +169,8 @@ class PembayaranController extends Controller
 
             return response()->json([
                 "success" => true,
-                "message" => "Pembayaran berhasil"
+                "message" => "Pembayaran berhasil",
+                "nomor" => $nota
             ]);
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -210,7 +211,7 @@ class PembayaranController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        return Pembayaran::destroy($id);
     }
 
 
@@ -286,5 +287,13 @@ class PembayaranController extends Controller
                 date('Y-m-d-His') .
                 '.pdf'
         );
+    }
+
+    public function struk(String $nobayar)
+    {
+
+        $pembayaran = Pembayaran::where('no_pembayaran', $nobayar)->first();
+        return view('pages.pembayaran.struk', compact('pembayaran'));
+
     }
 }

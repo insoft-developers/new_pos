@@ -292,7 +292,7 @@
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: "{{ url('pembelian') }}" + "/" + id,
+                    url: "{{ url('pembayaran') }}" + "/" + id,
                     type: 'DELETE',
                     data: {
                         _token: '{{ csrf_token() }}'

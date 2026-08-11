@@ -434,22 +434,95 @@
 
 
     $("#form-pembayaran").submit(function(e) {
+
         e.preventDefault();
+
         $.ajax({
+
             url: "{{ url('pembayaran') }}",
+
             type: "POST",
+
             data: $(this).serialize(),
+
             success: function(response) {
+
                 if (response.success) {
+
+                    // Tutup modal
                     $("#modal-pembayaran").modal("hide");
-                    Swal.fire('Berhasil!', response.message, 'success');
-                    // reloadTable();
-                    window.location = "{{ url('pembayaran') }}";
+
+                    // Tanya apakah ingin cetak
+                    Swal.fire({
+
+                        title: 'Pembayaran Berhasil',
+
+                        text: 'Apakah Anda ingin mencetak kwitansi pembayaran?',
+
+                        icon: 'success',
+
+                        showCancelButton: true,
+
+                        confirmButtonText: 'Cetak Kwitansi',
+
+                        cancelButtonText: 'Tidak',
+
+                        confirmButtonColor: '#3085d6',
+
+                        cancelButtonColor: '#6c757d',
+
+                    }).then((result) => {
+
+                        if (result.isConfirmed) {
+
+                            // Buka cetak di TAB BARU
+                            window.open(
+                                "{{ url('pembayaran/struk') }}/" + response.nomor,
+                                "_blank"
+                            );
+
+                        }
+
+                        // Setelah memilih Cetak / Tidak
+                        // halaman sekarang tetap refresh
+                        window.location = "{{ url('pembayaran') }}";
+
+                    });
+
                 } else {
-                    Swal.fire('Gagal!', xhr.responseJSON.message || 'Terjadi kesalahan.',
-                        'error');
+
+                    Swal.fire(
+                        'Gagal!',
+                        response.message || 'Pembayaran gagal disimpan.',
+                        'error'
+                    );
+
                 }
+
+            },
+
+            error: function(xhr) {
+
+                let message = 'Terjadi kesalahan saat menyimpan pembayaran.';
+
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+
+                Swal.fire(
+                    'Gagal!',
+                    message,
+                    'error'
+                );
+
             }
+
         });
+
     });
+
+
+
+
+
 </script>

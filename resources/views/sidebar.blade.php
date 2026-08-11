@@ -176,18 +176,14 @@
                         </a>
                         <div class="collapse" id="menuIcons">
                             <ul class="sub-menu">
+                                
                                 <li class="menu-item">
-                                    <a href="icons-boxicons.html" class="menu-link">
-                                        <span class="menu-text">Perusahaan</span>
-                                    </a>
-                                </li>
-                                <li class="menu-item">
-                                    <a href="icons-lucide.html" class="menu-link">
+                                    <a href="{{ url('profile') }}" class="menu-link">
                                         <span class="menu-text">Profil</span>
                                     </a>
                                 </li>
                                 <li class="menu-item">
-                                    <a href="icons-mdi.html" class="menu-link">
+                                    <a href="{{ url('change_password') }}" class="menu-link">
                                         <span class="menu-text">Ganti Password</span>
                                     </a>
                                 </li>

@@ -21,6 +21,20 @@
         top: 25px;
         color: #3f87fd;
     }
+
+    .form-insoft {
+        padding: 2px 10px 2px 14px;
+        border: 2px solid whitesmoke;
+        width: 50%;
+    }
+
+
+    .form-insoft2 {
+        padding: 2px 10px 2px 14px;
+        border: 2px solid whitesmoke;
+        width: 50%;
+        display: block;
+    }
 </style>
 
 @if ($view != 'dashboard')
