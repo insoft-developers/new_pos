@@ -1,4 +1,5 @@
 <style>
+    
     .pull-right {
         float: right !important;
     }
