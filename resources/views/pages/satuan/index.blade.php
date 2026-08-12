@@ -76,10 +76,10 @@
 
 
          </div>
-         @include('pages.kategori.modal')
+         @include('pages.satuan.modal')
      </div>
  @endsection
 
  @push('scripts')
-     @include('pages.kategori.js')
+     @include('pages.satuan.js')
  @endpush

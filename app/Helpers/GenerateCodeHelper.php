@@ -14,25 +14,20 @@ if (!function_exists('generateKode')) {
      *
      * @return string
      */
-    function generateKode($table, $field, $prefix, $digit = 7)
+    function generateKode($table, $field, $prefix, $digit = 3, $start = 1)
     {
-        $last = DB::table($table)
-            ->orderBy($field, 'DESC')
-            ->value($field);
-
+        $last = DB::table($table)->where($field, 'like', $prefix . '-%')->orderByRaw(" CAST(SUBSTRING_INDEX($field, '-', -1) AS UNSIGNED) DESC ")->value($field);
         if (!$last) {
-            $number = 1000000;
+            $number = $start;
         } else {
-
             $explode = explode('-', $last);
-
-            if (count($explode) == 2) {
+            if (count($explode) == 2 && is_numeric($explode[1])) {
                 $number = intval($explode[1]) + 1;
             } else {
-                $number = 1000000;
+                $number = $start;
             }
         }
-
-        return $prefix . '-' . str_pad($number, $digit, '0', STR_PAD_LEFT);
+        $number = str_pad($number, $digit, '0', STR_PAD_LEFT);
+        return $prefix . '-' . $number;
     }
 }
