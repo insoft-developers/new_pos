@@ -10,4 +10,6 @@ class Kategori extends Model
     use HasFactory;
 
     protected $table = 'master_kategori';
+    protected $guarded = [];
+    public $timestamps = false;
 }

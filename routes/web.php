@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PembayaranController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\PenggunaController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\PiutangController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
 
@@ -104,6 +106,13 @@ Route::middleware('login')->group(function () {
 
     Route::get('/pengaturan_printer', [PengaturanController::class, 'printer']);
     Route::post('/pengaturan_printer_update', [PengaturanController::class, 'printerUpdate'])->name('pengaturan.printer.update');
+
+
+    Route::resource('/kategori', KategoriController::class);
+    Route::get('/kategori_table', [KategoriController::class, 'table'])->name('kategori.table');
+
+    Route::resource('/satuan', SatuanController::class);
+    Route::get('/satuan_table', [SatuanController::class, 'table'])->name('satuan.table');
 
 
     Route::post('/logout', [

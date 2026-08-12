@@ -59,6 +59,17 @@
                                         <span class="menu-text">Data Pengguna</span>
                                     </a>
                                 </li>
+
+                                <li class="menu-item">
+                                    <a href="{{ url('kategori') }}" class="menu-link">
+                                        <span class="menu-text">Data Kategori</span>
+                                    </a>
+                                </li> 
+                                <li class="menu-item">
+                                    <a href="{{ url('satuan') }}" class="menu-link">
+                                        <span class="menu-text">Data Satuan</span>
+                                    </a>
+                                </li>
                                 
                             </ul>
                         </div>
