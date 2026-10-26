@@ -5,6 +5,7 @@ on:
     branches:
       - mtani
       - sprabot
+      - nasa
 
 jobs:
 
@@ -38,3 +39,33 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             /home/gens7193/public_html/pkb4.gen-zi.id/deploy.sh
+
+  deploy-nasa:
+    if: github.ref == 'refs/heads/nasa'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS NASA
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.NASA_SSH_HOST }}
+          username: ${{ secrets.NASA_SSH_USERNAME }}
+          key: ${{ secrets.NASA_SSH_PRIVATE_KEY }}
+          script: |
+            cd /www/wwwroot/nasa.drainstech.com
+
+            GIT_SSH_COMMAND="ssh -i /root/.ssh/github_new_pos" git fetch origin
+            GIT_SSH_COMMAND="ssh -i /root/.ssh/github_new_pos" git reset --hard origin/nasa
+
+            rm -f public/storage
+            ln -s /www/wwwroot/nasa.drainstech.com/storage/app/public public/storage
+
+            rm -f bootstrap/cache/*.php
+
+            /usr/bin/php /usr/bin/composer install --no-dev --no-scripts --optimize-autoloader
+
+            /usr/bin/php artisan migrate --force
+
+            /usr/bin/php artisan config:clear
+            /usr/bin/php artisan cache:clear
+            /usr/bin/php artisan view:clear
