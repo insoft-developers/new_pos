@@ -397,12 +397,40 @@
                 product.kd_barang
             );
 
-
         if (existing) {
 
             existing.jumlah++;
 
         } else {
+
+            // Ambil grup customer
+            let grup = $('#c_grup').val();
+
+            // Default harga = Umum
+            let priceType = 1;
+
+            if (grup === 'Grosir') {
+                priceType = 2;
+            } else if (grup === 'Freelancer') {
+                priceType = 3;
+            }
+
+            // Tentukan harga sesuai grup
+            let hargaDefault =
+                parseInt(product.harga_jual) || 0;
+
+            if (priceType === 2) {
+
+                hargaDefault =
+                    parseInt(product.harga_member) ||
+                    hargaDefault;
+
+            } else if (priceType === 3) {
+
+                hargaDefault =
+                    parseInt(product.harga_freelance) ||
+                    hargaDefault;
+            }
 
             cart.unshift({
 
@@ -414,34 +442,39 @@
 
                 satuan: product.satuan ?? '-',
 
-                harga: parseInt(product.harga_jual) || 0,
+                harga: hargaDefault,
 
                 jual: parseInt(product.harga_jual) || 0,
 
                 modal: parseInt(product.harga_beli) || 0,
 
-                reseller: parseInt(product.harga_reseller) || 0,
+                reseller: parseInt(product.harga_member) || 0,
+
+                freelance: parseInt(product.harga_freelance) || 0,
 
                 jumlah: 1,
 
                 disk: 0,
 
-                price_type: 0
-
+                price_type: priceType
             });
-
         }
-
 
         renderCart();
 
+    
 
-        bootstrap.Modal
-            .getInstance(
-                document.getElementById('productModal')
-            )
-            .hide();
+        const modalElement = document.getElementById('productModal');
 
+        if (modalElement) {
+            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        }
+
+       
     }
 
 
@@ -502,13 +535,25 @@
                 0;
 
             const hargaReseller =
-                parseInt(item.harga_reseller) ||
+                parseInt(item.harga_member) ||
                 parseInt(item.reseller) ||
                 0;
 
-            const harga = priceType === 2 ?
-                hargaReseller :
-                hargaUmum;
+            const hargaFreelance =
+                parseInt(item.harga_freelance) ||
+                parseInt(item.freelance) ||
+                0;
+
+
+            let harga = hargaUmum;
+
+            if (priceType === 2) {
+                harga = hargaReseller;
+            } else if (priceType === 3) {
+                harga = hargaFreelance;
+            }
+
+
 
             item.harga = harga;
             item.price_type = priceType;
@@ -603,6 +648,12 @@
                                     class="price-switch-btn ${priceType === 2 ? 'active reseller' : ''}"
                                     onclick="changePriceType(${index}, 2)">
                                 Reseller
+                            </button>
+
+                            <button type="button"
+                                    class="price-switch-btn ${priceType === 3 ? 'active freelance' : ''}"
+                                    onclick="changePriceType(${index}, 3)">
+                                Freelancer
                             </button>
 
                         </div>
@@ -1216,20 +1267,33 @@
         }
 
         const hargaUmum =
-            parseInt(item.harga_jual) ||
+            parseInt(item.jual) ||
             parseInt(item.harga) ||
             0;
 
         const hargaReseller =
-            parseInt(item.harga_reseller) ||
+            parseInt(item.reseller) ||
+            hargaUmum;
+
+        const hargaFreelance =
+            parseInt(item.freelance) ||
             hargaUmum;
 
         if (priceType === 2) {
+
             item.price_type = 2;
             item.harga = hargaReseller;
+
+        } else if (priceType === 3) {
+
+            item.price_type = 3;
+            item.harga = hargaFreelance;
+
         } else {
+
             item.price_type = 1;
             item.harga = hargaUmum;
+
         }
 
         renderCart();
@@ -1304,4 +1368,96 @@
 
         $("#kd_pelanggan").html(html);
     }
+
+
+    $('#kd_pelanggan').on('change', function() {
+
+        let text = $(this).find('option:selected').text().trim();
+
+        let grup = '';
+
+        if (text.includes(' - Freelancer')) {
+            grup = 'Freelancer';
+        } else if (text.includes(' - Grosir')) {
+            grup = 'Grosir';
+        } else if (text.includes(' - Reguler')) {
+            grup = 'Reguler';
+        }
+
+        $('#c_grup').val(grup);
+
+        console.log('Pelanggan:', text);
+        console.log('Grup:', grup);
+    });
+
+
+    function scanBarcode() {
+
+        let barcode = $('#barcode-scan').val().trim();
+
+        if (!barcode) {
+            return;
+        }
+
+        $.ajax({
+            url: "{{ route('barang.barcode') }}",
+            type: "GET",
+            data: {
+                barcode: barcode
+            },
+
+            beforeSend: function() {
+                $('#barcode-scan').prop('disabled', true);
+            },
+
+            success: function(response) {
+
+                if (response.success && response.data) {
+
+                    // Gunakan method yang sama dengan pilih barang
+                    selectProduct(response.data);
+
+                    // Kosongkan input
+                    $('#barcode-scan').val('');
+
+                } else {
+
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Barang tidak ditemukan',
+                        text: 'Barcode ' + barcode + ' tidak terdaftar.'
+                    });
+
+                    $('#barcode-scan').select();
+                }
+            },
+
+            error: function(xhr) {
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: 'Terjadi kesalahan saat mencari barcode.'
+                });
+
+                console.log(xhr.responseText);
+            },
+
+            complete: function() {
+                $('#barcode-scan').prop('disabled', false);
+                $('#barcode-scan').focus();
+            }
+        });
+    }
+
+    $('#barcode-scan').on('keydown', function(e) {
+
+        if (e.key === 'Enter') {
+
+            e.preventDefault();
+
+            scanBarcode();
+        }
+
+    });
 </script>

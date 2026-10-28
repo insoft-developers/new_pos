@@ -82,8 +82,11 @@ class BarangController extends Controller
                 ->addColumn('harga_jual', function ($row) {
                     return '<div style="text-align:right;">' . number_format($row->harga_jual) . '</div>';
                 })
-                ->addColumn('harga_reseller', function ($row) {
-                    return '<div style="text-align:right;">' . number_format($row->harga_reseller) . '</div>';
+                ->addColumn('harga_member', function ($row) {
+                    return '<div style="text-align:right;">' . number_format($row->harga_member) . '</div>';
+                })
+                ->addColumn('harga_freelance', function ($row) {
+                    return '<div style="text-align:right;">' . number_format($row->harga_freelance) . '</div>';
                 })
                 ->addColumn('kd_supplier', function ($row) {
                     return $row->supplier?->nm_supplier ?? '';
@@ -110,7 +113,7 @@ class BarangController extends Controller
 
                     return $button;
                 })
-                ->rawColumns(['action', 'harga_beli', 'harga_jual', 'harga_reseller', 'nm_barang', 'stok'])
+                ->rawColumns(['action', 'harga_beli', 'harga_jual', 'harga_member', 'nm_barang', 'stok', 'harga_freelance'])
                 ->make(true);
         }
     }
@@ -151,7 +154,8 @@ class BarangController extends Controller
             'stok' => 'nullable',
             'konversi' => 'nullable',
             'kd_supplier' => 'required',
-            'harga_reseller' => 'nullable'
+            'harga_member' => 'nullable',
+            'harga_freelance' => 'nullable'
         ]);
 
 
@@ -170,14 +174,15 @@ class BarangController extends Controller
             $input['alamat'] = '';
             $input['konversi'] = $request->konversi ?? 1;
             $input['hj'] =  $request->harga_jual;
-            $input['harga_member'] =  $request->harga_jual;
+            // $input['harga_member'] =  $request->harga_jual;
             $input['diskon_member'] = $request->harga_jual;
             $input['diskon'] = 0;
-            $input['harga_reseller'] = $request->harga_reseller ?? $request->harga_jual;
+            $input['harga_member'] = $request->harga_member ?? $request->harga_jual;
             $input['barcode'] = $request->barcode ?? strtoupper(uniqid());
             $input['stok'] = $request->stok ?? 0;
             $input['nm_barang'] = strtoupper($request->nm_barang);
-            $input['kd_kategori'] = strtoupper($request->kd_kategori);
+            $input['kd_kategori'] = $request->kd_kategori;
+            $input['harga_freelance'] = $request->harga_freelance ?? $request->harga_member ?? $request->harga_jual;
 
             Barang::create($input);
 
@@ -242,21 +247,22 @@ class BarangController extends Controller
             'stok' => 'nullable',
             'konversi' => 'nullable',
             'kd_supplier' => 'required',
-            'harga_reseller' => 'nullable'
+            'harga_member' => 'nullable'
         ]);
 
 
 
         $barang->barcode = $input['barcode'];
         $barang->nm_barang = strtoupper($input['nm_barang']);
-        $barang->kd_kategori = strtoupper($input['kd_kategori']);
+        $barang->kd_kategori = $input['kd_kategori'];
         $barang->harga_beli = $input['harga_beli'];
         $barang->harga_jual = $input['harga_jual'];
         $barang->satuan = $input['satuan'];
         $barang->hj = $input['harga_jual'];
-        $barang->harga_member = $input['harga_jual'];
+        // $barang->harga_member = $input['harga_jual'];
         $barang->diskon_member = $input['harga_jual'];
-        $barang->harga_reseller = $request->harga_reseller ?? $request->harga_jual;
+        $barang->harga_member = $request->harga_member ?? $request->harga_jual;
+        $input['harga_freelance'] = $request->harga_freelance ?? $request->harga_member ?? $request->harga_jual;
         $barang->kd_supplier = $input['kd_supplier'];
         $barang->save();
 

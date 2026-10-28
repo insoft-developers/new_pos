@@ -80,6 +80,7 @@ class PelangganController extends Controller
             'nm_pelanggan' => 'required',
             'alamat' => 'required',
             'telepon' => 'required',
+            'grup' => 'required'
         ]);
 
 
@@ -95,7 +96,7 @@ class PelangganController extends Controller
             $input['kd_pelanggan'] = $kode;
             $input['alamat2'] = "";
             $input['kontak'] = $input['nm_pelanggan'];
-            $input['grup'] = "reguler";
+            $input['grup'] = $input['grup'];
             $input['poin'] = 0;
             $input['deposit'] = 0;
             $input['angka'] = 1000000000;
@@ -152,6 +153,7 @@ class PelangganController extends Controller
             'nm_pelanggan' => 'required',
             'alamat' => 'required',
             'telepon' => 'required',
+            'grup' => 'required'
         ]);
 
 
@@ -161,6 +163,7 @@ class PelangganController extends Controller
             $data->nm_pelanggan = strtoupper($input['nm_pelanggan']);
             $data->alamat = $input['alamat'];
             $data->telepon = $input['telepon'];
+            $data->grup = $input['grup'];
             $data->save();
 
             DB::commit();

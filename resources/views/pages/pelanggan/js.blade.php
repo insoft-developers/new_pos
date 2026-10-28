@@ -3,7 +3,7 @@
         processing: true,
         serverSide: true,
 
-        ajax: '{{ route('pelanggan.table') }}',
+        ajax: "{{ route('pelanggan.table') }}",
         order: [
             [1, 'desc']
         ],
@@ -23,10 +23,15 @@
                 data: 'nm_pelanggan',
                 name: 'nm_pelanggan'
             },
+             {
+                data: 'grup',
+                name: 'grup'
+            },
             {
                 data: 'alamat',
                 name: 'alamat'
             },
+           
             {
                 data: 'telepon',
                 name: 'telepon'
@@ -58,6 +63,7 @@
                 $("#nm_pelanggan").val(data.nm_pelanggan);
                 $("#alamat").val(data.alamat);
                 $("#telepon").val(data.telepon);
+                $("#grup").val(data.grup);
                 
 
             }

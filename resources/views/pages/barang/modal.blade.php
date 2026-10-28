@@ -179,8 +179,20 @@
 
                                     <div class="input-group">
                                         <span class="input-group-text">Rp</span>
-                                        <input type="number" class="form-control text-end" id="harga_reseller"
-                                            name="harga_reseller">
+                                        <input type="number" class="form-control text-end" id="harga_member"
+                                            name="harga_member">
+                                    </div>
+                                </div>
+
+                                 <div class="col-md-6">
+                                    <label class="form-label small fw-semibold">
+                                        Harga Freelance
+                                    </label>
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">Rp</span>
+                                        <input type="number" class="form-control text-end" id="harga_freelance"
+                                            name="harga_freelance">
                                     </div>
                                 </div>
 

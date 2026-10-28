@@ -81,6 +81,23 @@
                                             placeholder="Masukkan nama pelanggan">
                                     </div>
                                 </div>
+                                 <div class="col-md-12">
+                                    <label class="form-label small fw-semibold">
+                                        Grup <span class="text-danger">*</span>
+                                    </label>
+
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <i class="mdi mdi-account"></i>
+                                        </span>
+                                        <select class="form-control" id="grup" name="grup">
+                                            <option value="">Pilih</option>
+                                            <option value="Reguler">Reguler</option>
+                                            <option value="Grosir">Grosir</option>
+                                            <option value="Freelancer">Freelancer</option>
+                                        </select>
+                                    </div>
+                                </div>
 
                                 <!-- Alamat -->
                                 <div class="col-md-12">

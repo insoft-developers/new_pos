@@ -39,6 +39,8 @@ Route::middleware('login')->group(function () {
     Route::post('/barang_delete', [BarangController::class, 'destroy']);
     Route::get('/barang_table', [BarangController::class, 'table'])->name('barang.table');
 
+
+
     Route::get('/barang/export/excel', [BarangController::class, 'exportExcel']);
     Route::get('/barang/export/pdf', [BarangController::class, 'exportPdf']);
 
@@ -66,6 +68,9 @@ Route::middleware('login')->group(function () {
     Route::get('/penjualan/export/excel', [PenjualanController::class, 'exportExcel']);
     Route::get('/penjualan/export/pdf', [PenjualanController::class, 'exportPdf']);
     Route::post('/penjualan_hapus', [PenjualanController::class, 'hapus']);
+
+    Route::get('/barang/barcode', [PenjualanController::class, 'barangBarcode'])
+    ->name('barang.barcode');
 
     Route::resource('pembelian', PembelianController::class);
     Route::get('/pembelian/barang/{kd_barang}', [PembelianController::class,'getBarangDetail'])->name('pembelian.barang.detail');

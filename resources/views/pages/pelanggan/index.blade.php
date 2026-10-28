@@ -51,6 +51,7 @@
                                                  <th width="70">Action</th>
                                                  <th>Kode</th>
                                                  <th>Nama Pelanggan</th>
+                                                 <th>Jenis</th>
                                                  <th>Alamat</th>
                                                  <th>Whatsapp</th>
                                                  

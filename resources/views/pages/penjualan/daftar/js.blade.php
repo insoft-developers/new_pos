@@ -138,9 +138,14 @@
                 } else {
 
                     data.items.forEach(function(item, index) {
-                        let typeHarga = item.price_type == 1 ?
+                        let typeHarga =
+                            item.price_type == 1 ?
                             '<small><span class="badge bg-success">reguler</span></small>' :
-                            '<small><span class="badge bg-danger">reseller</span></small>';
+                            item.price_type == 2 ?
+                            '<small><span class="badge bg-danger">reseller</span></small>' :
+                            item.price_type == 3 ?
+                            '<small><span class="badge bg-primary">freelance</span></small>' :
+                            '';
 
                         html += `
                         <tr>
@@ -328,4 +333,7 @@
             }
         });
     }
+
+
+    
 </script>

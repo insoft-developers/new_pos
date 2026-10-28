@@ -153,9 +153,8 @@
                                                  <th class="text-center">Stok</th>
                                                  <th class="text-end">H. Beli</th>
                                                  <th class="text-end">H. Jual</th>
-                                                 <th class="text-end">Reseller</th>
-                                                 
-                                                 
+                                                 <th class="text-end">H. Reseller</th>
+                                                 <th class="text-end">H. Freelance</th>
                                                  <th>Barcode</th>
                                                  <th class="text-center">Konv.</th>
                                                  <th>Supplier</th>

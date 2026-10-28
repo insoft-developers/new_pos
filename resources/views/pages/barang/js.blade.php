@@ -8,7 +8,7 @@
                 d.kategori = $('#filter_kategori').val();
                 d.supplier = $('#filter_supplier').val();
                 d.stok = $('#filter_stok').val();
-               
+
             }
         },
         order: [
@@ -23,14 +23,14 @@
             {
                 data: 'kd_barang',
                 name: 'kd_barang',
-                
+
             },
 
 
             {
                 data: 'nm_barang',
                 name: 'nm_barang',
-                
+
             },
             {
                 data: 'kd_kategori',
@@ -55,8 +55,12 @@
                 name: 'harga_jual'
             },
             {
-                data: 'harga_reseller',
-                name: 'harga_reseller'
+                data: 'harga_member',
+                name: 'harga_member'
+            },
+            {
+                data: 'harga_freelance',
+                name: 'harga_freelance'
             },
 
 
@@ -109,7 +113,8 @@
                 $("#harga_beli").val(data.harga_beli);
                 $("#harga_jual").val(data.harga_jual);
                 $("#konversi").val(data.konversi);
-                $("#harga_reseller").val(data.harga_reseller);
+                $("#harga_member").val(data.harga_member);
+                $("#harga_freelance").val(data.harga_freelance);
                 $("#satuan").val(data.satuan);
 
             }

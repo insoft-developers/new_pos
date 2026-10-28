@@ -553,4 +553,27 @@ class PenjualanController extends Controller
             ]);
         }
     }
+
+
+    public function barangBarcode(Request $request)
+    {
+        $request->validate([
+            'barcode' => 'required|string',
+        ]);
+
+        $barang = Barang::where('barcode', $request->barcode)
+            ->first();
+
+        if (!$barang) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Barang dengan barcode tersebut tidak ditemukan.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $barang,
+        ]);
+    }
 }
