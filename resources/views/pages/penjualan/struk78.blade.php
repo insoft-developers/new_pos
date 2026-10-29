@@ -27,21 +27,19 @@
 
         body {
             font-family: "Courier New", monospace;
-            font-size: 12px;
+            font-size: 13px;
             color: #000;
         }
 
         .receipt {
             width: 78mm;
-            padding: 3mm 3mm;
+            margin: 0;
+            padding: 3mm 0;
         }
 
         .center {
             text-align: center;
-        }
-
-        .bold {
-            font-weight: bold;
+            width: 100%;
         }
 
         .store-name {
@@ -55,13 +53,26 @@
             font-weight: bold;
         }
 
+        /*
+         * GARIS
+         */
         .line {
-            white-space: nowrap;
-            overflow: hidden;
-            margin: 5px 0;
             width: 100%;
+            border-top: 1px dashed #000;
+            margin: 5px 0;
+            height: 1px;
         }
 
+        .line-solid {
+            width: 100%;
+            border-top: 1px solid #000;
+            margin: 5px 0;
+            height: 1px;
+        }
+
+        /*
+         * INFORMASI TRANSAKSI
+         */
         .info-row {
             display: flex;
             width: 100%;
@@ -74,9 +85,13 @@
 
         .info-value {
             flex: 1;
+            min-width: 0;
             word-break: break-word;
         }
 
+        /*
+         * DETAIL
+         */
         .section-title {
             font-weight: bold;
             margin-bottom: 3px;
@@ -84,22 +99,26 @@
 
         .item {
             margin-bottom: 4px;
+            width: 100%;
         }
 
         .item-name {
             font-weight: normal;
             word-break: break-word;
+            overflow-wrap: break-word;
         }
 
         .item-row {
             display: flex;
             justify-content: space-between;
+            width: 100%;
             padding-left: 5mm;
-            gap: 5px;
+            gap: 3px;
         }
 
         .item-row span:first-child {
             flex: 1;
+            min-width: 0;
         }
 
         .item-row span:last-child {
@@ -107,15 +126,19 @@
             text-align: right;
         }
 
+        /*
+         * RINGKASAN
+         */
         .summary-row {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            gap: 5px;
+            gap: 3px;
         }
 
         .summary-row span:first-child {
             flex: 1;
+            min-width: 0;
         }
 
         .summary-row span:last-child {
@@ -128,11 +151,18 @@
             font-size: 14px;
         }
 
+        /*
+         * FOOTER
+         */
         .footer {
             text-align: center;
             font-weight: bold;
+            width: 100%;
         }
 
+        /*
+         * TOMBOL PRINT
+         */
         .print-button {
             position: fixed;
             top: 10px;
@@ -148,6 +178,9 @@
             cursor: pointer;
         }
 
+        /*
+         * PRINT
+         */
         @media print {
 
             .print-button {
@@ -163,11 +196,15 @@
 
             .receipt {
                 width: 78mm;
-                padding: 3mm 3mm;
+                margin: 0;
+                padding: 3mm 0;
             }
 
         }
 
+        /*
+         * PREVIEW DI BROWSER
+         */
         @media screen {
 
             body {
@@ -229,9 +266,7 @@
     </div>
 
 
-    <div class="line">
-        ==================================================
-    </div>
+    <div class="line"></div>
 
 
     {{-- INFORMASI TRANSAKSI --}}
@@ -302,9 +337,7 @@
     </div>
 
 
-    <div class="line">
-        ==================================================
-    </div>
+    <div class="line"></div>
 
 
     {{-- DETAIL --}}
@@ -313,9 +346,7 @@
         DETAIL BELANJA
     </div>
 
-    <div class="line">
-        --------------------------------------------------
-    </div>
+    <div class="line"></div>
 
 
     @foreach($items as $index => $item)
@@ -350,115 +381,36 @@
             </div>
 
 
-            @if($item->disk > 0)
-
-                <div class="item-row">
-
-                    <span>
-                        Diskon
-                    </span>
-
-                    <span>
-                        -Rp {{ number_format(
-                            $item->disk,
-                            0,
-                            ',',
-                            '.'
-                        ) }}
-                    </span>
-
-                </div>
-
-            @endif
+          
 
 
-            <div class="item-row">
-
-                <span>
-                    Total
-                </span>
-
-                <span>
-                    Rp {{ number_format(
-                        $item->total,
-                        0,
-                        ',',
-                        '.'
-                    ) }}
-                </span>
-
-            </div>
+          
 
         </div>
 
 
         @if(!$loop->last)
 
-            <div class="line">
-                --------------------------------------------------
-            </div>
+            <div class="line"></div>
 
         @endif
 
     @endforeach
 
 
-    <div class="line">
-        --------------------------------------------------
-    </div>
+    <div class="line"></div>
 
 
-    {{-- RINGKASAN --}}
+    {{-- RINGKASAN PEMBAYARAN --}}
 
     <div class="section-title">
         RINGKASAN PEMBAYARAN
     </div>
 
-    <div class="line">
-        --------------------------------------------------
-    </div>
+    <div class="line"></div>
 
 
-    <div class="summary-row">
-
-        <span>
-            Subtotal
-        </span>
-
-        <span>
-            Rp {{ number_format(
-                $penjualan->subtotal,
-                0,
-                ',',
-                '.'
-            ) }}
-        </span>
-
-    </div>
-
-
-    <div class="summary-row">
-
-        <span>
-            Total Diskon
-        </span>
-
-        <span>
-            -Rp {{ number_format(
-                $penjualan->total_discount,
-                0,
-                ',',
-                '.'
-            ) }}
-        </span>
-
-    </div>
-
-
-    <div class="line">
-        --------------------------------------------------
-    </div>
-
+    {{-- TOTAL --}}
 
     <div class="summary-row total">
 
@@ -478,6 +430,8 @@
     </div>
 
 
+    {{-- PEMBAYARAN --}}
+
     <div class="summary-row">
 
         <span>
@@ -495,6 +449,8 @@
 
     </div>
 
+
+    {{-- KEMBALIAN --}}
 
     <div class="summary-row">
 
@@ -514,9 +470,7 @@
     </div>
 
 
-    <div class="line">
-        ==================================================
-    </div>
+    <div class="line"></div>
 
 
     {{-- FOOTER --}}
@@ -530,9 +484,7 @@
     </div>
 
 
-    <div class="line">
-        ==================================================
-    </div>
+    <div class="line"></div>
 
 
 </div>
