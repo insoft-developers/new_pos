@@ -370,7 +370,7 @@ class PenjualanController extends Controller
 
         $pengaturan = Pengaturan::first();
 
-        $view = 'pages.penjualan.struk_kecil';
+        $view = 'pages.penjualan.struk78';
 
         // Kalau setting printer = besar
         if ($pengaturan?->printer_setting === 'besar') {
