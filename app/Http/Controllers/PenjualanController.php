@@ -77,6 +77,8 @@ class PenjualanController extends Controller
                     $request->kasir
                 );
             }
+
+            $query->orderBy('id','desc');
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('tanggal', function ($row) {

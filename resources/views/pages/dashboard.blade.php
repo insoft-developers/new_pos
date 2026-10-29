@@ -254,7 +254,7 @@
 
                                     <div class="stat-value">
 
-                                        Rp {{ number_format($penjualanHariIni ?? 0, 0, ',', '.') }}
+                                        <!-- Rp {{ number_format($penjualanHariIni ?? 0, 0, ',', '.') }} -->
 
                                     </div>
 
@@ -292,7 +292,7 @@
 
                                     <div class="stat-value">
 
-                                        Rp {{ number_format($penjualanBulanIni ?? 0, 0, ',', '.') }}
+                                        <!-- Rp {{ number_format($penjualanBulanIni ?? 0, 0, ',', '.') }} -->
 
                                     </div>
 
@@ -330,7 +330,7 @@
 
                                     <div class="stat-value">
 
-                                        Rp {{ number_format($pembayaranBulanIni ?? 0, 0, ',', '.') }}
+                                        <!-- Rp {{ number_format($pembayaranBulanIni ?? 0, 0, ',', '.') }} -->
 
                                     </div>
 
@@ -368,7 +368,7 @@
 
                                     <div class="stat-value">
 
-                                        Rp {{ number_format($pembelianBulanIni ?? 0, 0, ',', '.') }}
+                                        <!-- Rp {{ number_format($pembelianBulanIni ?? 0, 0, ',', '.') }} -->
 
                                     </div>
 

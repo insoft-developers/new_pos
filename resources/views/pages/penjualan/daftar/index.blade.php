@@ -170,7 +170,7 @@
                                          <thead class="table-light">
 
                                              <tr>
-
+                                                 <th>ID</th>
                                                  <th>Action</th>
                                                  <th>Tanggal</th>
                                                  <th>Nota</th>

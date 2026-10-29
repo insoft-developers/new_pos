@@ -18,7 +18,7 @@
     .alamat-toko {
         display: block;
         position: relative;
-        left: -228px;
+        left: -150px;
         top: 25px;
         color: #3f87fd;
     }

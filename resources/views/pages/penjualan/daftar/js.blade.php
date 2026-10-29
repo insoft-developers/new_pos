@@ -13,9 +13,15 @@
             }
         },
         order: [
-            [2, 'desc']
+            [0, 'desc']
         ],
-        columns: [{
+        columns: [
+            {
+                data: 'id',
+                name: 'id',
+                visible:false,
+            },
+            {
                 data: 'action',
                 name: 'action',
                 orderable: false,
