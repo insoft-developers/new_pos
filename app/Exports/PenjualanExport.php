@@ -5,6 +5,7 @@ namespace App\Exports;
 use App\Models\Pelanggan;
 use App\Models\Pengguna;
 use App\Models\Penjualan;
+use App\Models\PenjualanItem;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithCustomStartCell;
@@ -27,11 +28,24 @@ class PenjualanExport implements
     ShouldAutoSize
 {
     protected Request $request;
-    protected $totalSubtotal;
-    protected $totalDiscount;
-    protected $totalPenjualan;
-    protected $totalPembayaran;
-    protected $totalKembali;
+
+    protected $totalSubtotal = 0;
+    protected $totalDiscount = 0;
+    protected $totalPenjualan = 0;
+    protected $totalHpp = 0;
+    protected $totalMargin = 0;
+    protected $totalPembayaran = 0;
+    protected $totalKembali = 0;
+
+    /**
+     * Cache data item berdasarkan nota
+     */
+    protected $itemsByNota = null;
+
+    /**
+     * Cache collection penjualan
+     */
+    protected $penjualanCollection = null;
 
     public function __construct(Request $request)
     {
@@ -51,6 +65,11 @@ class PenjualanExport implements
      */
     public function collection()
     {
+        // Gunakan cache supaya collection tidak query ulang
+        if ($this->penjualanCollection !== null) {
+            return $this->penjualanCollection;
+        }
+
         $request = $this->request;
 
         $query = Penjualan::query();
@@ -112,9 +131,41 @@ class PenjualanExport implements
             );
         }
 
-        return $query
+        $data = $query
             ->orderBy('tanggal', 'desc')
             ->get();
+
+        /*
+         * ============================================================
+         * AMBIL SEMUA ITEM SEKALIGUS
+         * Relasi:
+         *
+         * penjualan.nota
+         *        ↓
+         * penjualan_post.nota
+         *
+         * Jadi tidak melakukan query item satu-per-satu.
+         * ============================================================
+         */
+
+        $notas = $data
+            ->pluck('nota')
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($notas->count() > 0) {
+            $this->itemsByNota = PenjualanItem::query()
+                ->whereIn('nota', $notas)
+                ->get()
+                ->groupBy('nota');
+        } else {
+            $this->itemsByNota = collect();
+        }
+
+        $this->penjualanCollection = $data;
+
+        return $this->penjualanCollection;
     }
 
     /**
@@ -129,6 +180,8 @@ class PenjualanExport implements
             'Subtotal',
             'Diskon',
             'Penjualan',
+            'HPP',
+            'Margin',
             'Bayar',
             'Kembali',
             'Status',
@@ -137,25 +190,97 @@ class PenjualanExport implements
     }
 
     /**
+     * Ambil HPP berdasarkan nota
+     */
+    protected function getHppByNota($nota): float
+    {
+        if (!$nota) {
+            return 0;
+        }
+
+        $items = $this->itemsByNota[$nota] ?? collect();
+
+        $hpp = 0;
+
+        foreach ($items as $item) {
+
+            $modal = (float) ($item->modal ?? 0);
+            $jumlah = (float) ($item->jumlah ?? 0);
+
+            $hpp += $modal * $jumlah;
+        }
+
+        return $hpp;
+    }
+
+    /**
      * Mapping data
      */
     public function map($row): array
     {
+        // ==========================
+        // NILAI DASAR
+        // ==========================
 
-        $this->totalSubtotal = $this->totalSubtotal + $row->subtotal ?? 0;
-        $this->totalDiscount = $this->totalDiscount + $row->total_discount ?? 0;
-        $this->totalPenjualan = $this->totalPenjualan + $row->belanja ?? 0;
-        $this->totalPembayaran = $this->totalPembayaran + $row->bayar ?? 0;
-        $this->totalKembali = $this->totalKembali + $row->kembali ?? 0;
+        $subtotal = (float) ($row->subtotal ?? 0);
+
+        $discount = (float) ($row->total_discount ?? 0);
+
+        $penjualan = (float) ($row->belanja ?? 0);
+
+        $bayar = (float) ($row->bayar ?? 0);
+
+        $kembali = (float) ($row->kembali ?? 0);
+
+        // ==========================
+        // HITUNG HPP
+        // ==========================
+
+        $hpp = $this->getHppByNota($row->nota);
+
+        // ==========================
+        // HITUNG MARGIN
+        // ==========================
+
+        $margin = $penjualan - $hpp;
+
+        // ==========================
+        // TOTAL
+        // ==========================
+
+        $this->totalSubtotal += $subtotal;
+
+        $this->totalDiscount += $discount;
+
+        $this->totalPenjualan += $penjualan;
+
+        $this->totalHpp += $hpp;
+
+        $this->totalMargin += $margin;
+
+        $this->totalPembayaran += $bayar;
+
+        $this->totalKembali += $kembali;
+
+        // ==========================
+        // RETURN DATA
+        // ==========================
+
         return [
             $row->tanggal,
             $row->nota,
             $row->pelanggan?->nm_pelanggan ?? '-',
-            (float) ($row->subtotal ?? 0),
-            (float) ($row->total_discount ?? 0),
-            (float) ($row->belanja ?? 0),
-            (float) ($row->bayar ?? 0),
-            (float) ($row->kembali ?? 0),
+
+            $subtotal,
+            $discount,
+            $penjualan,
+
+            $hpp,
+            $margin,
+
+            $bayar,
+            $kembali,
+
             $row->status_pembayaran ?? '-',
             $row->kasir?->nama ?? '-',
         ];
@@ -178,27 +303,26 @@ class PenjualanExport implements
                 // IDENTITAS TOKO
                 // ==================================================
 
-                $sheet->mergeCells('A1:J1');
+                $sheet->mergeCells('A1:L1');
 
                 $sheet->setCellValue(
                     'A1',
                     env('NAMA_TOKO')
                 );
 
-                $sheet->mergeCells('A2:J2');
+                $sheet->mergeCells('A2:L2');
 
                 $sheet->setCellValue(
                     'A2',
                     env('ALAMAT_TOKO1')
                 );
 
-                $sheet->mergeCells('A3:J3');
+                $sheet->mergeCells('A3:L3');
 
                 $sheet->setCellValue(
                     'A3',
                     'DAFTAR PENJUALAN'
                 );
-
 
                 // ==================================================
                 // FILTER
@@ -207,6 +331,7 @@ class PenjualanExport implements
                 $tanggalDari = 'Semua';
 
                 if ($request->filled('tanggal_dari')) {
+
                     $tanggalDari = date(
                         'd-m-Y',
                         strtotime($request->tanggal_dari)
@@ -216,6 +341,7 @@ class PenjualanExport implements
                 $tanggalSampai = 'Semua';
 
                 if ($request->filled('tanggal_sampai')) {
+
                     $tanggalSampai = date(
                         'd-m-Y',
                         strtotime($request->tanggal_sampai)
@@ -227,16 +353,29 @@ class PenjualanExport implements
                     ' s/d ' .
                     $tanggalSampai;
 
+                // ==================================================
+                // CUSTOMER
+                // ==================================================
 
-                  
                 $customer = '';
-                if($request->filled('customer')){
-                    $xpelanggan = Pelanggan::where('kd_pelanggan',$request->customer)->first(); 
+
+                if ($request->filled('customer')) {
+
+                    $xpelanggan = Pelanggan::where(
+                        'kd_pelanggan',
+                        $request->customer
+                    )->first();
+
                     $customer = $xpelanggan->nm_pelanggan ?? '';
+
                 } else {
+
                     $customer = 'Semua Customer';
                 }
 
+                // ==================================================
+                // STATUS
+                // ==================================================
 
                 $status = 'Semua';
 
@@ -246,81 +385,102 @@ class PenjualanExport implements
                         str_replace(
                             '_',
                             ' ',
-                            $request->status_pembayaran
+                            $request->status
                         )
                     );
                 }
 
+                // ==================================================
+                // KASIR
+                // ==================================================
+
                 $kasir = '';
-                if($request->filled('kasir')){
-                    $xkasir = Pengguna::where('kd_pengguna',$request->kasir)->first(); 
+
+                if ($request->filled('kasir')) {
+
+                    $xkasir = Pengguna::where(
+                        'kd_pengguna',
+                        $request->kasir
+                    )->first();
+
                     $kasir = $xkasir->nama ?? '';
+
                 } else {
+
                     $kasir = 'Semua Kasir';
                 }
-
 
                 // ==================================================
                 // FILTER DISPLAY
                 // ==================================================
 
                 $sheet->mergeCells('A5:B5');
+
                 $sheet->setCellValue(
                     'A5',
                     'Periode'
                 );
 
-                $sheet->mergeCells('C5:J5');
+                $sheet->mergeCells('C5:L5');
+
                 $sheet->setCellValue(
                     'C5',
                     $periode
                 );
 
+                // --------------------------------------------------
 
                 $sheet->mergeCells('A6:B6');
+
                 $sheet->setCellValue(
                     'A6',
                     'Customer'
                 );
 
-                $sheet->mergeCells('C6:J6');
+                $sheet->mergeCells('C6:L6');
+
                 $sheet->setCellValue(
                     'C6',
                     $customer
                 );
 
+                // --------------------------------------------------
 
                 $sheet->mergeCells('A7:B7');
+
                 $sheet->setCellValue(
                     'A7',
                     'Status Pembayaran'
                 );
 
-                $sheet->mergeCells('C7:J7');
+                $sheet->mergeCells('C7:L7');
+
                 $sheet->setCellValue(
                     'C7',
                     $status
                 );
 
+                // --------------------------------------------------
 
                 $sheet->mergeCells('A8:B8');
+
                 $sheet->setCellValue(
                     'A8',
                     'Kasir'
                 );
 
-                $sheet->mergeCells('C8:J8');
+                $sheet->mergeCells('C8:L8');
+
                 $sheet->setCellValue(
                     'C8',
                     $kasir
                 );
 
-
                 // ==================================================
                 // STYLE JUDUL
                 // ==================================================
 
-                $sheet->getStyle('A1:J1')->applyFromArray([
+                $sheet->getStyle('A1:L1')->applyFromArray([
 
                     'font' => [
                         'bold' => true,
@@ -329,16 +489,15 @@ class PenjualanExport implements
 
                     'alignment' => [
                         'horizontal' =>
-                        Alignment::HORIZONTAL_CENTER,
+                            Alignment::HORIZONTAL_CENTER,
 
                         'vertical' =>
-                        Alignment::VERTICAL_CENTER,
+                            Alignment::VERTICAL_CENTER,
                     ],
 
                 ]);
 
-
-                $sheet->getStyle('A2:J2')->applyFromArray([
+                $sheet->getStyle('A2:L2')->applyFromArray([
 
                     'font' => [
                         'size' => 11,
@@ -346,16 +505,15 @@ class PenjualanExport implements
 
                     'alignment' => [
                         'horizontal' =>
-                        Alignment::HORIZONTAL_CENTER,
+                            Alignment::HORIZONTAL_CENTER,
 
                         'vertical' =>
-                        Alignment::VERTICAL_CENTER,
+                            Alignment::VERTICAL_CENTER,
                     ],
 
                 ]);
 
-
-                $sheet->getStyle('A3:J3')->applyFromArray([
+                $sheet->getStyle('A3:L3')->applyFromArray([
 
                     'font' => [
                         'bold' => true,
@@ -364,41 +522,33 @@ class PenjualanExport implements
 
                     'alignment' => [
                         'horizontal' =>
-                        Alignment::HORIZONTAL_CENTER,
+                            Alignment::HORIZONTAL_CENTER,
 
                         'vertical' =>
-                        Alignment::VERTICAL_CENTER,
+                            Alignment::VERTICAL_CENTER,
                     ],
 
                 ]);
-
 
                 // ==================================================
                 // STYLE FILTER
                 // ==================================================
 
-                $sheet->getStyle('A5:J8')->applyFromArray([
+                $sheet->getStyle('A5:L8')->applyFromArray([
 
                     'borders' => [
-
                         'allBorders' => [
-
                             'borderStyle' =>
-                            Border::BORDER_THIN,
-
+                                Border::BORDER_THIN,
                         ],
-
                     ],
 
                     'alignment' => [
-
                         'vertical' =>
-                        Alignment::VERTICAL_CENTER,
-
+                            Alignment::VERTICAL_CENTER,
                     ],
 
                 ]);
-
 
                 $sheet->getStyle('A5:B8')->applyFromArray([
 
@@ -407,18 +557,15 @@ class PenjualanExport implements
                     ],
 
                     'fill' => [
-
                         'fillType' =>
-                        Fill::FILL_SOLID,
+                            Fill::FILL_SOLID,
 
                         'startColor' => [
                             'rgb' => 'E9ECEF',
                         ],
-
                     ],
 
                 ]);
-
 
                 // ==================================================
                 // HEADER TABEL
@@ -427,7 +574,7 @@ class PenjualanExport implements
                 $headerRow = 10;
 
                 $sheet->getStyle(
-                    "A{$headerRow}:J{$headerRow}"
+                    "A{$headerRow}:L{$headerRow}"
                 )->applyFromArray([
 
                     'font' => [
@@ -435,39 +582,30 @@ class PenjualanExport implements
                     ],
 
                     'fill' => [
-
                         'fillType' =>
-                        Fill::FILL_SOLID,
+                            Fill::FILL_SOLID,
 
                         'startColor' => [
                             'rgb' => 'D9EAF7',
                         ],
-
                     ],
 
                     'alignment' => [
-
                         'horizontal' =>
-                        Alignment::HORIZONTAL_CENTER,
+                            Alignment::HORIZONTAL_CENTER,
 
                         'vertical' =>
-                        Alignment::VERTICAL_CENTER,
-
+                            Alignment::VERTICAL_CENTER,
                     ],
 
                     'borders' => [
-
                         'allBorders' => [
-
                             'borderStyle' =>
-                            Border::BORDER_THIN,
-
+                                Border::BORDER_THIN,
                         ],
-
                     ],
 
                 ]);
-
 
                 // ==================================================
                 // JUMLAH DATA
@@ -484,7 +622,6 @@ class PenjualanExport implements
                 $totalRow =
                     $lastDataRow + 1;
 
-
                 // ==================================================
                 // BORDER DATA
                 // ==================================================
@@ -492,45 +629,45 @@ class PenjualanExport implements
                 if ($totalData > 0) {
 
                     $sheet->getStyle(
-                        "A11:J{$lastDataRow}"
+                        "A11:L{$lastDataRow}"
                     )->applyFromArray([
 
                         'borders' => [
-
                             'allBorders' => [
-
                                 'borderStyle' =>
-                                Border::BORDER_THIN,
-
+                                    Border::BORDER_THIN,
                             ],
-
                         ],
 
                         'alignment' => [
-
                             'vertical' =>
-                            Alignment::VERTICAL_CENTER,
-
+                                Alignment::VERTICAL_CENTER,
                         ],
 
                     ]);
                 }
 
-
                 // ==================================================
                 // FORMAT RUPIAH
+                //
+                // D = Subtotal
+                // E = Diskon
+                // F = Penjualan
+                // G = HPP
+                // H = Margin
+                // I = Bayar
+                // J = Kembali
                 // ==================================================
 
                 if ($totalData > 0) {
 
                     $sheet->getStyle(
-                        "D11:H{$lastDataRow}"
+                        "D11:J{$lastDataRow}"
                     )->getNumberFormat()
                         ->setFormatCode(
                             '"Rp" #,##0'
                         );
                 }
-
 
                 // ==================================================
                 // TOTAL
@@ -541,34 +678,54 @@ class PenjualanExport implements
                     'TOTAL'
                 );
 
+                // Subtotal
                 $sheet->setCellValue(
                     "D{$totalRow}",
                     $this->totalSubtotal
                 );
 
+                // Diskon
                 $sheet->setCellValue(
                     "E{$totalRow}",
                     $this->totalDiscount
                 );
 
+                // Penjualan
                 $sheet->setCellValue(
                     "F{$totalRow}",
                     $this->totalPenjualan
                 );
 
+                // HPP
                 $sheet->setCellValue(
                     "G{$totalRow}",
+                    $this->totalHpp
+                );
+
+                // Margin
+                $sheet->setCellValue(
+                    "H{$totalRow}",
+                    $this->totalMargin
+                );
+
+                // Bayar
+                $sheet->setCellValue(
+                    "I{$totalRow}",
                     $this->totalPembayaran
                 );
 
+                // Kembali
                 $sheet->setCellValue(
-                    "H{$totalRow}",
-                   $this->totalKembali
+                    "J{$totalRow}",
+                    $this->totalKembali
                 );
 
+                // ==================================================
+                // STYLE TOTAL
+                // ==================================================
 
                 $sheet->getStyle(
-                    "C{$totalRow}:H{$totalRow}"
+                    "C{$totalRow}:J{$totalRow}"
                 )->applyFromArray([
 
                     'font' => [
@@ -576,46 +733,49 @@ class PenjualanExport implements
                     ],
 
                     'fill' => [
-
                         'fillType' =>
-                        Fill::FILL_SOLID,
+                            Fill::FILL_SOLID,
 
                         'startColor' => [
                             'rgb' => 'E9ECEF',
                         ],
-
                     ],
 
                     'borders' => [
-
                         'allBorders' => [
-
                             'borderStyle' =>
-                            Border::BORDER_THIN,
-
+                                Border::BORDER_THIN,
                         ],
-
                     ],
 
                 ]);
 
+                // ==================================================
+                // FORMAT RUPIAH TOTAL
+                // ==================================================
 
                 $sheet->getStyle(
-                    "D{$totalRow}:H{$totalRow}"
+                    "D{$totalRow}:J{$totalRow}"
                 )->getNumberFormat()
                     ->setFormatCode(
                         '"Rp" #,##0'
                     );
 
-
                 // ==================================================
                 // AUTOFILTER
                 // ==================================================
 
-                $sheet->setAutoFilter(
-                    "A10:J{$lastDataRow}"
-                );
+                if ($totalData > 0) {
 
+                    $sheet->setAutoFilter(
+                        "A10:L{$lastDataRow}"
+                    );
+                } else {
+
+                    $sheet->setAutoFilter(
+                        "A10:L10"
+                    );
+                }
 
                 // ==================================================
                 // FREEZE HEADER
@@ -623,40 +783,41 @@ class PenjualanExport implements
 
                 $sheet->freezePane('A11');
 
-
                 // ==================================================
-                // ALIGNMENT
+                // ALIGNMENT ANGKA
                 // ==================================================
 
-                $sheet->getStyle(
-                    "D11:H{$lastDataRow}"
-                )->getAlignment()->setHorizontal(
-                    Alignment::HORIZONTAL_RIGHT
-                );
+                if ($totalData > 0) {
 
+                    $sheet->getStyle(
+                        "D11:J{$lastDataRow}"
+                    )->getAlignment()->setHorizontal(
+                        Alignment::HORIZONTAL_RIGHT
+                    );
 
-                $sheet->getStyle(
-                    "A11:A{$lastDataRow}"
-                )->getAlignment()->setHorizontal(
-                    Alignment::HORIZONTAL_CENTER
-                );
+                    $sheet->getStyle(
+                        "A11:A{$lastDataRow}"
+                    )->getAlignment()->setHorizontal(
+                        Alignment::HORIZONTAL_CENTER
+                    );
 
-
-                $sheet->getStyle(
-                    "I11:I{$lastDataRow}"
-                )->getAlignment()->setHorizontal(
-                    Alignment::HORIZONTAL_CENTER
-                );
-
+                    // Status
+                    $sheet->getStyle(
+                        "K11:K{$lastDataRow}"
+                    )->getAlignment()->setHorizontal(
+                        Alignment::HORIZONTAL_CENTER
+                    );
+                }
 
                 // ==================================================
                 // ROW HEIGHT
                 // ==================================================
 
                 $sheet->getRowDimension(1)->setRowHeight(28);
-                $sheet->getRowDimension(2)->setRowHeight(20);
-                $sheet->getRowDimension(3)->setRowHeight(25);
 
+                $sheet->getRowDimension(2)->setRowHeight(20);
+
+                $sheet->getRowDimension(3)->setRowHeight(25);
 
                 // ==================================================
                 // PRINT SETTING
@@ -678,18 +839,26 @@ class PenjualanExport implements
                     true
                 );
 
+                // ==================================================
+                // PRINT MARGIN
+                // ==================================================
+
+                $sheet->getPageMargins()->setTop(0.5);
+
+                $sheet->getPageMargins()->setRight(0.3);
+
+                $sheet->getPageMargins()->setBottom(0.5);
+
+                $sheet->getPageMargins()->setLeft(0.3);
 
                 // ==================================================
                 // PRINT AREA
                 // ==================================================
 
-                $sheet->getPageMargins()->setTop(0.5);
-                $sheet->getPageMargins()->setRight(0.3);
-                $sheet->getPageMargins()->setBottom(0.5);
-                $sheet->getPageMargins()->setLeft(0.3);
-
+                // Jika ingin print area aktif, buka komentar:
+                //
                 // $sheet->getPageSetup()->setPrintArea(
-                //     "A1:J{$totalRow}"
+                //     "A1:L{$totalRow}"
                 // );
             },
 
