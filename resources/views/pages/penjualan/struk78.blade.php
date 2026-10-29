@@ -40,7 +40,7 @@
         .receipt {
             width: 76mm;
             margin: 0;
-            padding: 8mm 8mm;
+            padding: 12mm 12mm;
         }
 
         /*
@@ -214,7 +214,7 @@
             .receipt {
                 width: 76mm;
                 margin: 0;
-                padding: 5mm 5mm;
+                padding: 12mm 12mm;
             }
 
         }
