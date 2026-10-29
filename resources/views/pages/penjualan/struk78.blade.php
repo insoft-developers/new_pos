@@ -31,12 +31,21 @@
             color: #000;
         }
 
+        /*
+         * STRUK
+         * Lebar kertas 78mm
+         * Padding kiri-kanan 3mm
+         * Area isi efektif ±72mm
+         */
         .receipt {
             width: 78mm;
             margin: 0;
-            padding: 3mm 0;
+            padding: 4mm 4mm;
         }
 
+        /*
+         * HEADER
+         */
         .center {
             text-align: center;
             width: 100%;
@@ -87,10 +96,11 @@
             flex: 1;
             min-width: 0;
             word-break: break-word;
+            overflow-wrap: break-word;
         }
 
         /*
-         * DETAIL
+         * DETAIL BELANJA
          */
         .section-title {
             font-weight: bold;
@@ -111,27 +121,31 @@
         .item-row {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
             width: 100%;
-            padding-left: 5mm;
+            padding-left: 3mm;
             gap: 3px;
         }
 
         .item-row span:first-child {
             flex: 1;
             min-width: 0;
+            word-break: break-word;
         }
 
         .item-row span:last-child {
             white-space: nowrap;
             text-align: right;
+            flex-shrink: 0;
         }
 
         /*
-         * RINGKASAN
+         * RINGKASAN PEMBAYARAN
          */
         .summary-row {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
             width: 100%;
             gap: 3px;
         }
@@ -144,6 +158,7 @@
         .summary-row span:last-child {
             white-space: nowrap;
             text-align: right;
+            flex-shrink: 0;
         }
 
         .total {
@@ -167,6 +182,7 @@
             position: fixed;
             top: 10px;
             right: 10px;
+            z-index: 9999;
         }
 
         .btn-print {
@@ -176,6 +192,7 @@
             border: 0;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 14px;
         }
 
         /*
@@ -197,7 +214,7 @@
             .receipt {
                 width: 78mm;
                 margin: 0;
-                padding: 3mm 0;
+                padding: 5mm 5mm;
             }
 
         }
@@ -209,7 +226,7 @@
 
             body {
                 margin: 20px auto;
-                box-shadow: 0 0 8px rgba(0,0,0,.2);
+                box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
             }
 
         }
@@ -221,7 +238,9 @@
 <body>
 
 
+{{-- ========================================================= --}}
 {{-- TOMBOL PRINT --}}
+{{-- ========================================================= --}}
 
 <div class="print-button">
 
@@ -236,10 +255,16 @@
 </div>
 
 
+{{-- ========================================================= --}}
+{{-- STRUK --}}
+{{-- ========================================================= --}}
+
 <div class="receipt">
 
 
-    {{-- HEADER --}}
+    {{-- ===================================================== --}}
+    {{-- HEADER TOKO --}}
+    {{-- ===================================================== --}}
 
     <div class="center">
 
@@ -269,7 +294,9 @@
     <div class="line"></div>
 
 
+    {{-- ===================================================== --}}
     {{-- INFORMASI TRANSAKSI --}}
+    {{-- ===================================================== --}}
 
     <div class="info-row">
 
@@ -317,8 +344,7 @@
         </div>
 
         <div class="info-value">
-            :
-            {{ \Carbon\Carbon::parse($penjualan->tanggal)->format('d-m-Y') }}
+            : {{ \Carbon\Carbon::parse($penjualan->tanggal)->format('d-m-Y') }}
         </div>
 
     </div>
@@ -340,7 +366,9 @@
     <div class="line"></div>
 
 
-    {{-- DETAIL --}}
+    {{-- ===================================================== --}}
+    {{-- DETAIL BELANJA --}}
+    {{-- ===================================================== --}}
 
     <div class="section-title">
         DETAIL BELANJA
@@ -353,14 +381,14 @@
 
         <div class="item">
 
+
+            {{-- NAMA BARANG --}}
             <div class="item-name">
-
-                {{ $index + 1 }}.
                 {{ $item->nm_barang }}
-
             </div>
 
 
+            {{-- JUMLAH x HARGA + TOTAL --}}
             <div class="item-row">
 
                 <span>
@@ -381,11 +409,6 @@
             </div>
 
 
-          
-
-
-          
-
         </div>
 
 
@@ -401,7 +424,9 @@
     <div class="line"></div>
 
 
+    {{-- ===================================================== --}}
     {{-- RINGKASAN PEMBAYARAN --}}
+    {{-- ===================================================== --}}
 
     <div class="section-title">
         RINGKASAN PEMBAYARAN
@@ -411,7 +436,6 @@
 
 
     {{-- TOTAL --}}
-
     <div class="summary-row total">
 
         <span>
@@ -431,7 +455,6 @@
 
 
     {{-- PEMBAYARAN --}}
-
     <div class="summary-row">
 
         <span>
@@ -451,7 +474,6 @@
 
 
     {{-- KEMBALIAN --}}
-
     <div class="summary-row">
 
         <span>
@@ -473,7 +495,9 @@
     <div class="line"></div>
 
 
+    {{-- ===================================================== --}}
     {{-- FOOTER --}}
+    {{-- ===================================================== --}}
 
     <div class="footer">
         TERIMA KASIH
@@ -490,6 +514,10 @@
 </div>
 
 
+{{-- ========================================================= --}}
+{{-- AUTO PRINT --}}
+{{-- ========================================================= --}}
+
 <script>
 
     window.onload = function () {
@@ -503,6 +531,7 @@
     };
 
 </script>
+
 
 </body>
 </html>
