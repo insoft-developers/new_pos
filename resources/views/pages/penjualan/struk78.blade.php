@@ -9,7 +9,7 @@
     <style>
 
         @page {
-            size: 78mm auto;
+            size: 76mm auto;
             margin: 0;
         }
 
@@ -21,7 +21,7 @@
         body {
             margin: 0;
             padding: 0;
-            width: 78mm;
+            width: 76mm;
             background: #fff;
         }
 
@@ -33,14 +33,14 @@
 
         /*
          * STRUK
-         * Lebar kertas 78mm
+         * Lebar kertas 76mm
          * Padding kiri-kanan 3mm
          * Area isi efektif ±72mm
          */
         .receipt {
-            width: 78mm;
+            width: 76mm;
             margin: 0;
-            padding: 4mm 4mm;
+            padding: 8mm 8mm;
         }
 
         /*
@@ -206,13 +206,13 @@
 
             html,
             body {
-                width: 78mm;
+                width: 76mm;
                 margin: 0;
                 padding: 0;
             }
 
             .receipt {
-                width: 78mm;
+                width: 76mm;
                 margin: 0;
                 padding: 5mm 5mm;
             }
