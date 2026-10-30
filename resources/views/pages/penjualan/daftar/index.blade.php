@@ -173,6 +173,7 @@
                                                  <th>ID</th>
                                                  <th>Action</th>
                                                  <th>Tanggal</th>
+                                                 <th>Jam</th>
                                                  <th>Nota</th>
                                                  <th>Pelanggan</th>
                                                  <th>Subtotal</th>

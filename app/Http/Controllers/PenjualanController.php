@@ -84,6 +84,14 @@ class PenjualanController extends Controller
                 ->addColumn('tanggal', function ($row) {
                     return date('d-m-Y', strtotime($row->tanggal));
                 })
+                ->addColumn('jam', function ($row) {
+                    if(empty($row->jam)) {
+                        return '-';
+                    } else {
+                        return date('H:i:s', strtotime($row->jam));
+                    }
+                    
+                })
                 ->addColumn('kd_pelanggan', function ($row) {
                     return '<div style="white-space:normal;width:180px;">' . $row->pelanggan?->nm_pelanggan ?? '' . '</div>';
                 })
@@ -258,6 +266,7 @@ class PenjualanController extends Controller
                 'kd_pelanggan' => $request->kd_pelanggan,
                 'keterangan' => $request->keterangan ?? '',
                 'tanggal' => $request->tanggal,
+                'jam' => date('Y-m-d H:i:s'),
                 'belanja' => $total,
                 'bayar' => $bayar,
                 'donasi' => 0,

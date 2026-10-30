@@ -133,11 +133,13 @@ class PenjualanExport implements
 
         $data = $query
             ->orderBy('tanggal', 'desc')
+            ->orderBy('jam', 'desc')
             ->get();
 
         /*
          * ============================================================
          * AMBIL SEMUA ITEM SEKALIGUS
+         *
          * Relasi:
          *
          * penjualan.nota
@@ -175,6 +177,7 @@ class PenjualanExport implements
     {
         return [
             'Tanggal',
+            'Jam',
             'Nota',
             'Pelanggan',
             'Subtotal',
@@ -267,21 +270,45 @@ class PenjualanExport implements
         // ==========================
 
         return [
-            $row->tanggal,
+            // TANGGAL
+            $row->tanggal ?? '-',
+
+            // JAM
+            // Field jam langsung digunakan.
+            // Format data: Y-m-d H:i:s
+            $row->jam ?? '-',
+
+            // NOTA
             $row->nota,
+
+            // PELANGGAN
             $row->pelanggan?->nm_pelanggan ?? '-',
 
+            // SUBTOTAL
             $subtotal,
+
+            // DISKON
             $discount,
+
+            // PENJUALAN
             $penjualan,
 
+            // HPP
             $hpp,
+
+            // MARGIN
             $margin,
 
+            // BAYAR
             $bayar,
+
+            // KEMBALI
             $kembali,
 
+            // STATUS
             $row->status_pembayaran ?? '-',
+
+            // KASIR
             $row->kasir?->nama ?? '-',
         ];
     }
@@ -303,21 +330,21 @@ class PenjualanExport implements
                 // IDENTITAS TOKO
                 // ==================================================
 
-                $sheet->mergeCells('A1:L1');
+                $sheet->mergeCells('A1:M1');
 
                 $sheet->setCellValue(
                     'A1',
                     env('NAMA_TOKO')
                 );
 
-                $sheet->mergeCells('A2:L2');
+                $sheet->mergeCells('A2:M2');
 
                 $sheet->setCellValue(
                     'A2',
                     env('ALAMAT_TOKO1')
                 );
 
-                $sheet->mergeCells('A3:L3');
+                $sheet->mergeCells('A3:M3');
 
                 $sheet->setCellValue(
                     'A3',
@@ -421,7 +448,7 @@ class PenjualanExport implements
                     'Periode'
                 );
 
-                $sheet->mergeCells('C5:L5');
+                $sheet->mergeCells('C5:M5');
 
                 $sheet->setCellValue(
                     'C5',
@@ -437,7 +464,7 @@ class PenjualanExport implements
                     'Customer'
                 );
 
-                $sheet->mergeCells('C6:L6');
+                $sheet->mergeCells('C6:M6');
 
                 $sheet->setCellValue(
                     'C6',
@@ -453,7 +480,7 @@ class PenjualanExport implements
                     'Status Pembayaran'
                 );
 
-                $sheet->mergeCells('C7:L7');
+                $sheet->mergeCells('C7:M7');
 
                 $sheet->setCellValue(
                     'C7',
@@ -469,7 +496,7 @@ class PenjualanExport implements
                     'Kasir'
                 );
 
-                $sheet->mergeCells('C8:L8');
+                $sheet->mergeCells('C8:M8');
 
                 $sheet->setCellValue(
                     'C8',
@@ -480,7 +507,7 @@ class PenjualanExport implements
                 // STYLE JUDUL
                 // ==================================================
 
-                $sheet->getStyle('A1:L1')->applyFromArray([
+                $sheet->getStyle('A1:M1')->applyFromArray([
 
                     'font' => [
                         'bold' => true,
@@ -497,7 +524,7 @@ class PenjualanExport implements
 
                 ]);
 
-                $sheet->getStyle('A2:L2')->applyFromArray([
+                $sheet->getStyle('A2:M2')->applyFromArray([
 
                     'font' => [
                         'size' => 11,
@@ -513,7 +540,7 @@ class PenjualanExport implements
 
                 ]);
 
-                $sheet->getStyle('A3:L3')->applyFromArray([
+                $sheet->getStyle('A3:M3')->applyFromArray([
 
                     'font' => [
                         'bold' => true,
@@ -534,18 +561,24 @@ class PenjualanExport implements
                 // STYLE FILTER
                 // ==================================================
 
-                $sheet->getStyle('A5:L8')->applyFromArray([
+                $sheet->getStyle('A5:M8')->applyFromArray([
 
                     'borders' => [
+
                         'allBorders' => [
+
                             'borderStyle' =>
                                 Border::BORDER_THIN,
+
                         ],
+
                     ],
 
                     'alignment' => [
+
                         'vertical' =>
                             Alignment::VERTICAL_CENTER,
+
                     ],
 
                 ]);
@@ -553,16 +586,22 @@ class PenjualanExport implements
                 $sheet->getStyle('A5:B8')->applyFromArray([
 
                     'font' => [
+
                         'bold' => true,
+
                     ],
 
                     'fill' => [
+
                         'fillType' =>
                             Fill::FILL_SOLID,
 
                         'startColor' => [
+
                             'rgb' => 'E9ECEF',
+
                         ],
+
                     ],
 
                 ]);
@@ -574,35 +613,47 @@ class PenjualanExport implements
                 $headerRow = 10;
 
                 $sheet->getStyle(
-                    "A{$headerRow}:L{$headerRow}"
+                    "A{$headerRow}:M{$headerRow}"
                 )->applyFromArray([
 
                     'font' => [
+
                         'bold' => true,
+
                     ],
 
                     'fill' => [
+
                         'fillType' =>
                             Fill::FILL_SOLID,
 
                         'startColor' => [
+
                             'rgb' => 'D9EAF7',
+
                         ],
+
                     ],
 
                     'alignment' => [
+
                         'horizontal' =>
                             Alignment::HORIZONTAL_CENTER,
 
                         'vertical' =>
                             Alignment::VERTICAL_CENTER,
+
                     ],
 
                     'borders' => [
+
                         'allBorders' => [
+
                             'borderStyle' =>
                                 Border::BORDER_THIN,
+
                         ],
+
                     ],
 
                 ]);
@@ -629,19 +680,25 @@ class PenjualanExport implements
                 if ($totalData > 0) {
 
                     $sheet->getStyle(
-                        "A11:L{$lastDataRow}"
+                        "A11:M{$lastDataRow}"
                     )->applyFromArray([
 
                         'borders' => [
+
                             'allBorders' => [
+
                                 'borderStyle' =>
                                     Border::BORDER_THIN,
+
                             ],
+
                         ],
 
                         'alignment' => [
+
                             'vertical' =>
                                 Alignment::VERTICAL_CENTER,
+
                         ],
 
                     ]);
@@ -650,19 +707,19 @@ class PenjualanExport implements
                 // ==================================================
                 // FORMAT RUPIAH
                 //
-                // D = Subtotal
-                // E = Diskon
-                // F = Penjualan
-                // G = HPP
-                // H = Margin
-                // I = Bayar
-                // J = Kembali
+                // E = Subtotal
+                // F = Diskon
+                // G = Penjualan
+                // H = HPP
+                // I = Margin
+                // J = Bayar
+                // K = Kembali
                 // ==================================================
 
                 if ($totalData > 0) {
 
                     $sheet->getStyle(
-                        "D11:J{$lastDataRow}"
+                        "E11:K{$lastDataRow}"
                     )->getNumberFormat()
                         ->setFormatCode(
                             '"Rp" #,##0'
@@ -674,49 +731,49 @@ class PenjualanExport implements
                 // ==================================================
 
                 $sheet->setCellValue(
-                    "C{$totalRow}",
+                    "D{$totalRow}",
                     'TOTAL'
                 );
 
                 // Subtotal
                 $sheet->setCellValue(
-                    "D{$totalRow}",
+                    "E{$totalRow}",
                     $this->totalSubtotal
                 );
 
                 // Diskon
                 $sheet->setCellValue(
-                    "E{$totalRow}",
+                    "F{$totalRow}",
                     $this->totalDiscount
                 );
 
                 // Penjualan
                 $sheet->setCellValue(
-                    "F{$totalRow}",
+                    "G{$totalRow}",
                     $this->totalPenjualan
                 );
 
                 // HPP
                 $sheet->setCellValue(
-                    "G{$totalRow}",
+                    "H{$totalRow}",
                     $this->totalHpp
                 );
 
                 // Margin
                 $sheet->setCellValue(
-                    "H{$totalRow}",
+                    "I{$totalRow}",
                     $this->totalMargin
                 );
 
                 // Bayar
                 $sheet->setCellValue(
-                    "I{$totalRow}",
+                    "J{$totalRow}",
                     $this->totalPembayaran
                 );
 
                 // Kembali
                 $sheet->setCellValue(
-                    "J{$totalRow}",
+                    "K{$totalRow}",
                     $this->totalKembali
                 );
 
@@ -725,27 +782,37 @@ class PenjualanExport implements
                 // ==================================================
 
                 $sheet->getStyle(
-                    "C{$totalRow}:J{$totalRow}"
+                    "D{$totalRow}:K{$totalRow}"
                 )->applyFromArray([
 
                     'font' => [
+
                         'bold' => true,
+
                     ],
 
                     'fill' => [
+
                         'fillType' =>
                             Fill::FILL_SOLID,
 
                         'startColor' => [
+
                             'rgb' => 'E9ECEF',
+
                         ],
+
                     ],
 
                     'borders' => [
+
                         'allBorders' => [
+
                             'borderStyle' =>
                                 Border::BORDER_THIN,
+
                         ],
+
                     ],
 
                 ]);
@@ -755,7 +822,7 @@ class PenjualanExport implements
                 // ==================================================
 
                 $sheet->getStyle(
-                    "D{$totalRow}:J{$totalRow}"
+                    "E{$totalRow}:K{$totalRow}"
                 )->getNumberFormat()
                     ->setFormatCode(
                         '"Rp" #,##0'
@@ -768,12 +835,13 @@ class PenjualanExport implements
                 if ($totalData > 0) {
 
                     $sheet->setAutoFilter(
-                        "A10:L{$lastDataRow}"
+                        "A10:M{$lastDataRow}"
                     );
+
                 } else {
 
                     $sheet->setAutoFilter(
-                        "A10:L10"
+                        "A10:M10"
                     );
                 }
 
@@ -790,23 +858,62 @@ class PenjualanExport implements
                 if ($totalData > 0) {
 
                     $sheet->getStyle(
-                        "D11:J{$lastDataRow}"
+                        "E11:K{$lastDataRow}"
                     )->getAlignment()->setHorizontal(
                         Alignment::HORIZONTAL_RIGHT
                     );
 
+                    // Tanggal
                     $sheet->getStyle(
                         "A11:A{$lastDataRow}"
                     )->getAlignment()->setHorizontal(
                         Alignment::HORIZONTAL_CENTER
                     );
 
-                    // Status
+                    // Jam
                     $sheet->getStyle(
-                        "K11:K{$lastDataRow}"
+                        "B11:B{$lastDataRow}"
                     )->getAlignment()->setHorizontal(
                         Alignment::HORIZONTAL_CENTER
                     );
+
+                    // Status
+                    $sheet->getStyle(
+                        "L11:L{$lastDataRow}"
+                    )->getAlignment()->setHorizontal(
+                        Alignment::HORIZONTAL_CENTER
+                    );
+
+                    // Nota
+                    $sheet->getStyle(
+                        "C11:C{$lastDataRow}"
+                    )->getAlignment()->setHorizontal(
+                        Alignment::HORIZONTAL_CENTER
+                    );
+                }
+
+                // ==================================================
+                // FORMAT JAM
+                // ==================================================
+                //
+                // Field jam berasal langsung dari database
+                // dengan bentuk:
+                //
+                // Y-m-d H:i:s
+                //
+                // Contoh:
+                // 2026-10-30 09:15:32
+                //
+                // ==================================================
+
+                if ($totalData > 0) {
+
+                    $sheet->getStyle(
+                        "B11:B{$lastDataRow}"
+                    )->getNumberFormat()
+                        ->setFormatCode(
+                            'yyyy-mm-dd hh:mm:ss'
+                        );
                 }
 
                 // ==================================================
@@ -858,7 +965,7 @@ class PenjualanExport implements
                 // Jika ingin print area aktif, buka komentar:
                 //
                 // $sheet->getPageSetup()->setPrintArea(
-                //     "A1:L{$totalRow}"
+                //     "A1:M{$totalRow}"
                 // );
             },
 

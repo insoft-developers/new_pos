@@ -31,8 +31,10 @@
                 data: 'tanggal',
                 name: 'tanggal'
             },
-
-
+            {
+                data: 'jam',
+                name: 'jam'
+            },
             {
                 data: 'nota',
                 name: 'nota'

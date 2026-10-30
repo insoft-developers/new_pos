@@ -462,7 +462,7 @@
 
         renderCart();
 
-    
+
 
         const modalElement = document.getElementById('productModal');
 
@@ -474,7 +474,7 @@
             }
         }
 
-       
+
     }
 
 
@@ -1460,4 +1460,28 @@
         }
 
     });
+
+
+    function cancelTransaction() {
+
+        // Cek apakah ada barang atau pembayaran yang sudah diisi
+        const hasItems = typeof cart !== 'undefined' && cart.length > 0;
+        const bayar = parseFloat($('#bayar').val()) || 0;
+        const keterangan = $('#keterangan').val().trim();
+
+        if (hasItems || bayar > 0 || keterangan !== '') {
+
+            const yakin = confirm(
+                'Batalkan transaksi ini?\n\n' +
+                'Data yang sudah dimasukkan akan dikosongkan.'
+            );
+
+            if (!yakin) {
+                return;
+            }
+        }
+
+        // Kembali ke halaman sebelumnya
+        window.history.back();
+    }
 </script>

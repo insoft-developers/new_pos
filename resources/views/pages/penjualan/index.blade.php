@@ -452,13 +452,32 @@
 
 
                         {{-- SAVE --}}
-                        <button type="button" id="btn-save" class="btn btn-save" onclick="saveTransaction()">
+                        {{-- ACTION BUTTON --}}
+                        <div class="d-flex gap-2">
 
-                            <i class="mdi mdi-check-circle-outline"></i>
+                            {{-- BATAL --}}
+                            <button type="button"
+                                id="btn-cancel"
+                                class="btn btn-outline-secondary flex-grow-1"
+                                onclick="cancelTransaction()">
 
-                            Simpan Transaksi
+                                <i class="mdi mdi-close-circle-outline"></i>
+                                Batal
 
-                        </button>
+                            </button>
+
+                            {{-- SIMPAN --}}
+                            <button type="button"
+                                id="btn-save"
+                                class="btn btn-save flex-grow-1"
+                                onclick="saveTransaction()">
+
+                                <i class="mdi mdi-check-circle-outline"></i>
+                                Simpan Transaksi
+
+                            </button>
+
+                        </div>
 
                     </div>
 

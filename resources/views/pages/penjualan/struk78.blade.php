@@ -349,6 +349,18 @@
 
     </div>
 
+     <div class="info-row">
+
+        <div class="info-label">
+            Jam
+        </div>
+
+        <div class="info-value">
+            : {{ ! empty($penjualan->jam) ? date('H:i:s', strtotime($penjualan->jam)) : '-' }}
+        </div>
+
+    </div>
+
 
     <div class="info-row">
 
