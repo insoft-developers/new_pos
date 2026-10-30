@@ -262,7 +262,7 @@ class BarangController extends Controller
         // $barang->harga_member = $input['harga_jual'];
         $barang->diskon_member = $input['harga_jual'];
         $barang->harga_member = $request->harga_member ?? $request->harga_jual;
-        $input['harga_freelance'] = $request->harga_freelance ?? $request->harga_member ?? $request->harga_jual;
+        $barang->harga_freelance = $request->harga_freelance ?? $request->harga_member ?? $request->harga_jual;
         $barang->kd_supplier = $input['kd_supplier'];
         $barang->save();
 
