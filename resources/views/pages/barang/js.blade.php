@@ -8,12 +8,21 @@
                 d.kategori = $('#filter_kategori').val();
                 d.supplier = $('#filter_supplier').val();
                 d.stok = $('#filter_stok').val();
+                d.harga = $('#filter_harga').val();
 
             }
         },
         order: [
             [1, 'desc']
         ],
+
+        createdRow: function(row, data, dataIndex) {
+
+            if (parseInt(data.harga_rugi) === 1) {
+                $(row).addClass('table-danger');
+            }
+
+        },
         columns: [{
                 data: 'action',
                 name: 'action',
@@ -79,6 +88,14 @@
                 name: 'kd_supplier',
                 visible: false,
             },
+
+            {
+                data: 'harga_rugi',
+                name: 'harga_rugi',
+                visible: false,
+                searchable: false,
+                orderable: false
+            }
 
 
         ]
@@ -234,6 +251,7 @@
         $('#filter_kategori').val('');
         $('#filter_supplier').val('');
         $('#filter_stok').val('');
+        $('#filter_harga').val('');
 
         table.ajax.reload();
     });
@@ -252,6 +270,7 @@
             kategori: $('#filter_kategori').val(),
             supplier: $('#filter_supplier').val(),
             stok: $('#filter_stok').val(),
+            harga: $('#filter_harga').val(),
 
         });
         let url;

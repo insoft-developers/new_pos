@@ -1,5 +1,11 @@
 <style>
-    
+    #list-table tbody tr.table-danger td {
+        background-color: #f8d7da !important;
+        color: #842029 !important;
+        font-weight: 500;
+    }
+
+
     .pull-right {
         float: right !important;
     }
@@ -39,75 +45,75 @@
 </style>
 
 @if ($view != 'dashboard')
-    <style>
-        .card {
-            border-radius: 12px;
-        }
+<style>
+    .card {
+        border-radius: 12px;
+    }
 
-        .card-header {
-            padding: 18px 20px;
-        }
+    .card-header {
+        padding: 18px 20px;
+    }
 
-        /* Table */
-        #list-table {
-            font-size: 12px;
-        }
+    /* Table */
+    #list-table {
+        font-size: 12px;
+    }
 
-        #list-table thead th {
-            background: white;
-            color: black;
-            font-weight: 600;
-            white-space: nowrap;
-            vertical-align: middle;
-            padding: 10px 8px;
-        }
+    #list-table thead th {
+        background: white;
+        color: black;
+        font-weight: 600;
+        white-space: nowrap;
+        vertical-align: middle;
+        padding: 10px 8px;
+    }
 
-        #list-table tbody td {
-            padding: 3px 8px 3px 8px;
-            vertical-align: middle;
-        }
+    #list-table tbody td {
+        padding: 3px 8px 3px 8px;
+        vertical-align: middle;
+    }
 
-        #list-table tbody tr:hover {
-            background: #f8fbff;
-        }
+    #list-table tbody tr:hover {
+        background: #f8fbff;
+    }
 
-        /* DataTables Search */
-        .dataTables_filter input {
-            border-radius: 20px;
-            padding: .35rem .8rem;
-        }
+    /* DataTables Search */
+    .dataTables_filter input {
+        border-radius: 20px;
+        padding: .35rem .8rem;
+    }
 
-        /* Button */
-        .btn-tambah {
-            padding: 6px 18px;
-            font-weight: 600;
-        }
+    /* Button */
+    .btn-tambah {
+        padding: 6px 18px;
+        font-weight: 600;
+    }
 
-        /* Badge stok */
-        .badge-stock {
-            font-size: 11px;
-        }
+    /* Badge stok */
+    .badge-stock {
+        font-size: 11px;
+    }
 
 
-        /* Chrome, Safari, Edge */
-        input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
+    /* Chrome, Safari, Edge */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 
-        /* Firefox */
-        input[type="number"] {
-            -moz-appearance: textfield;
-            appearance: textfield;
-        }
+    /* Firefox */
+    input[type="number"] {
+        -moz-appearance: textfield;
+        appearance: textfield;
+    }
 
-        .row .card-body {
-            width: 78vw !important;
-        }
+    .row .card-body {
+        width: 78vw !important;
+    }
 
-        .text-end .breadcrumb {
-            padding-right: 20px !important;
-        }
-    </style>
+    .text-end .breadcrumb {
+        padding-right: 20px !important;
+    }
+</style>
 @endif

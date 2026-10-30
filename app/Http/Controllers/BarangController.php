@@ -60,10 +60,35 @@ class BarangController extends Controller
                 $query->where('stok', '<=', 0);
             }
 
+            if ($request->harga == 'rugi') {
+
+                $query->where(function ($q) {
+
+                    $q->whereColumn('harga_beli', '>', 'harga_jual')
+                        ->orWhereColumn('harga_beli', '>', 'harga_member')
+                        ->orWhereColumn('harga_beli', '>', 'harga_freelance');
+                });
+            }
+
 
 
             return DataTables::of($query)
                 ->addIndexColumn()
+
+                ->addColumn('harga_rugi', function ($row) {
+
+                    $hargaBeli = (float) $row->harga_beli;
+                    $hargaJual = (float) $row->harga_jual;
+                    $hargaMember = (float) $row->harga_member;
+                    $hargaFreelance = (float) $row->harga_freelance;
+
+                    return (
+                        $hargaBeli > $hargaJual ||
+                        $hargaBeli > $hargaMember ||
+                        $hargaBeli > $hargaFreelance
+                    ) ? 1 : 0;
+                })
+
                 ->editColumn('nm_barang', function ($row) {
                     return '<div style="white-space:normal;width:180px;">' . strtoupper($row->nm_barang) . '</div>';
                 })
