@@ -42,6 +42,27 @@
         width: 50%;
         display: block;
     }
+
+
+    @media (max-width: 767.98px) {
+
+        .nama-toko {
+            font-size: 23px;
+            font-weight: bold;
+            margin-top: 12px;
+            white-space: nowrap;
+        }
+
+        .alamat-toko {
+            display: block;
+            position: relative;
+            left: -137px;
+            top: 33px;
+            color: #3f87fd;
+            white-space: nowrap;
+        }
+
+    }
 </style>
 
 @if ($view != 'dashboard')
@@ -116,4 +137,6 @@
         padding-right: 20px !important;
     }
 </style>
+
+
 @endif
