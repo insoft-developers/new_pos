@@ -73,6 +73,8 @@ Route::middleware('login')->group(function () {
     Route::get('/barang/barcode', [PenjualanController::class, 'barangBarcode'])
     ->name('barang.barcode');
 
+    Route::post('/penjualan_double', [PenjualanController::class, 'double'])->name('penjualan.double');
+
     Route::resource('pembelian', PembelianController::class);
     Route::get('/pembelian/barang/{kd_barang}', [PembelianController::class,'getBarangDetail'])->name('pembelian.barang.detail');
     Route::get('/pembelian_table', [PembelianController::class, 'table']);

@@ -343,5 +343,38 @@
     }
 
 
+    function fixDouble(nota) {
+        Swal.fire({
+            title: 'Are sure?',
+            text: "This data will be fixed permanently",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, Fix it!',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ url('penjualan_double') }}",
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        nota: nota
+                    },
+                    success: function(response) {
+                        Swal.fire('Berhasil!', response.message, 'success');
+                        reloadTable();
+                    },
+                    error: function(xhr) {
+                        Swal.fire('Gagal!', xhr.responseJSON.message || 'Terjadi kesalahan.',
+                            'error');
+                    }
+                });
+            }
+        });
+    }
+
+
     
 </script>

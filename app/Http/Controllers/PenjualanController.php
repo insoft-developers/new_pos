@@ -78,19 +78,18 @@ class PenjualanController extends Controller
                 );
             }
 
-            $query->orderBy('id','desc');
+            $query->orderBy('id', 'desc');
             return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('tanggal', function ($row) {
                     return date('d-m-Y', strtotime($row->tanggal));
                 })
                 ->addColumn('jam', function ($row) {
-                    if(empty($row->jam)) {
+                    if (empty($row->jam)) {
                         return '-';
                     } else {
                         return date('H:i:s', strtotime($row->jam));
                     }
-                    
                 })
                 ->addColumn('kd_pelanggan', function ($row) {
                     return '<div style="white-space:normal;width:180px;">' . $row->pelanggan?->nm_pelanggan ?? '' . '</div>';
@@ -145,6 +144,13 @@ class PenjualanController extends Controller
                             class="btn btn-danger btn-sm"
                             title="Hapus">
                             <i class="mdi mdi-delete"></i>
+                        </button>
+
+                         <button
+                            onclick="fixDouble(\'' . $row->nota . '\')"
+                            class="btn btn-warning btn-sm"
+                            title="Perbaiki Double">
+                            <i class="mdi mdi-file-alert"></i>
                         </button>
                             </center>
                         ';
@@ -586,5 +592,98 @@ class PenjualanController extends Controller
             'success' => true,
             'data' => $barang,
         ]);
+    }
+
+
+
+    public function double(Request $request)
+    {
+        $input = $request->validate([
+            'nota' => 'required|string',
+        ]);
+
+        try {
+
+            $result = DB::transaction(function () use ($input) {
+
+                $penjualan = Penjualan::where('nota', $input['nota'])
+                    ->orderBy('id', 'asc')
+                    ->lockForUpdate()
+                    ->get();
+
+                if ($penjualan->count() <= 1) {
+                    return [
+                        'success' => true,
+                        'message' => 'Nota penjualan tidak double',
+                    ];
+                }
+
+                // Hanya proses kasus dua baris identik
+                if ($penjualan->count() != 2) {
+                    throw new \Exception(
+                        'Jumlah duplikat bukan 2, perlu pemeriksaan manual'
+                    );
+                }
+
+                $pertama = $penjualan->first();
+                $kedua = $penjualan->last();
+
+                // Pastikan nominal kedua baris identik
+                foreach (
+                    [
+                        'belanja',
+                        'subtotal',
+                        'bayar',
+                        'total_discount'
+                    ] as $field
+                ) {
+
+                    if (bccomp(
+                        (string) $pertama->$field,
+                        (string) $kedua->$field,
+                        2
+                    ) !== 0) {
+                        throw new \Exception(
+                            "Nilai {$field} berbeda, periksa manual"
+                        );
+                    }
+                }
+
+                // Gabungkan nilai kedua record
+                $pertama->belanja =
+                    $pertama->belanja + $kedua->belanja;
+
+                $pertama->subtotal =
+                    $pertama->subtotal + $kedua->subtotal;
+
+                $pertama->bayar =
+                    $pertama->bayar + $kedua->bayar;
+
+                $pertama->total_discount =
+                    $pertama->total_discount + $kedua->total_discount;
+
+                $pertama->save();
+
+                // Hapus hanya header kedua
+                $kedua->delete();
+
+                return [
+                    'success' => true,
+                    'message' => 'Penjualan double berhasil digabungkan',
+                    'nota' => $pertama->nota,
+                    'id_dipertahankan' => $pertama->id,
+                    'id_dihapus' => $kedua->id,
+                    'total_belanja' => $pertama->belanja,
+                ];
+            });
+
+            return response()->json($result);
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
     }
 }
