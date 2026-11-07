@@ -10,16 +10,17 @@
                 d.customer = $('#filter_customer').val();
                 d.status = $('#filter_status').val();
                 d.kasir = $('#filter_kasir').val();
+                d.deviasi = $('#filter_deviasi').val();
+                d.hpp = $('#filter_hpp').val();
             }
         },
         order: [
             [0, 'desc']
         ],
-        columns: [
-            {
+        columns: [{
                 data: 'id',
                 name: 'id',
-                visible:false,
+                visible: false,
             },
             {
                 data: 'action',
@@ -72,6 +73,25 @@
             {
                 data: 'kd_user',
                 name: 'kd_user'
+            },
+
+            {
+                data: 'item_amount',
+                name: 'item_amount'
+            },
+            {
+                data: 'deviation',
+                name: 'deviation'
+            },
+
+            {
+                data: 'hpp',
+                name: 'hpp'
+            },
+
+            {
+                data: 'margin',
+                name: 'margin'
             },
 
 
@@ -279,6 +299,8 @@
         $('#filter_customer').val('');
         $('#filter_status').val('');
         $('#filter_kasir').val('');
+        $('#filter_deviasi').val('');
+        $('#filter_hpp').val('');
         table.ajax.reload();
     });
 
@@ -374,7 +396,4 @@
             }
         });
     }
-
-
-    
 </script>
