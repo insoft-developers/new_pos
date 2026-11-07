@@ -30,7 +30,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('login')->group(function () {
 
 
-    Route::get('/', [MainController::class, 'index']);
+    Route::get('/', [PenjualanController::class, 'pos']);
+    Route::get('/dashboard', [MainController::class, 'index']);
 
     Route::get('/barang', [BarangController::class, 'index']);
     Route::get('/barang_edit/{kd_barang}', [BarangController::class, 'edit']);

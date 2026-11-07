@@ -2,13 +2,13 @@
             <!-- Brand Logo -->
             <div class="logo-box">
                 <!-- Brand Logo Light -->
-                <a href="index.html" class="logo-light">
+                <a href="{{ url('/') }}" class="logo-light">
                     <img src="{{ asset('images/logo3.png') }}" alt="logo" class="logo-lg" height="48">
                     <img src="{{ asset('images/logo3.png') }}" alt="small logo" class="logo-sm" height="24">
                 </a>
 
                 <!-- Brand Logo Dark -->
-                <a href="index.html" class="logo-dark">
+                <a href="{{ url('/') }}" class="logo-dark">
                     <img src="{{ asset('images/logo3.png') }}" alt="dark logo" class="logo-lg" height="48">
                     <img src="{{ asset('images/logo3.png') }}" alt="small logo" class="logo-sm" height="24">
                 </a>
@@ -21,7 +21,7 @@
                     
                     <li class="menu-title"></li>
                     <li class="menu-item">
-                        <a href="{{ url('/') }}" class="menu-link waves-effect">
+                        <a href="{{ url('/dashboard') }}" class="menu-link waves-effect">
                             <span class="menu-icon"><i data-lucide="airplay "></i></span>
                             <span class="menu-text"> Dashboard </span>
                             
